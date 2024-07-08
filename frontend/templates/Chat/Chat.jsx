@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, getDocs } from 'firebase/firestore';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -26,8 +26,10 @@ import CenterChatContentNoMessages from './CenterChatContentNoMessages';
 import ChatSpinner from './ChatSpinner';
 import Message from './Message';
 import styles from './styles';
+import ChatHistory from './ChatHistory';
 
 import {
+  setAllSessions,
   openInfoChat,
   resetChat,
   setChatSession,
@@ -63,6 +65,7 @@ const ChatInterface = () => {
     error,
   } = useSelector((state) => state.chat);
   const { data: userData } = useSelector((state) => state.user);
+  const { sessions, allSessions } = useSelector((state) => state.chat);
 
   const sessionId = localStorage.getItem('sessionId');
 
@@ -125,6 +128,8 @@ const ChatInterface = () => {
         where('id', '==', sessionId)
       );
 
+      
+
       unsubscribe = onSnapshot(sessionRef, async (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === 'modified') {
@@ -151,6 +156,8 @@ const ChatInterface = () => {
       if (sessionLoaded || currentSession) unsubscribe();
     };
   }, [sessionLoaded]);
+
+
 
   const handleOnScroll = () => {
     const scrolled =
@@ -355,6 +362,7 @@ const ChatInterface = () => {
 
     return null;
   };
+
 
   return (
     <Grid {...styles.mainGridProps}>
