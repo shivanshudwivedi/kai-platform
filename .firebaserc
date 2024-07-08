@@ -1,12 +1,12 @@
 {
   "projects": {
-    "default": "kai-ai-f63c8"
+    "default": "kai-platform-2fe0a"
   },
   "targets": {
     "kai-ai-f63c8": {
       "hosting": {
         "next": [
-          "kai-ai-f63c8"
+          "kai-platform-2fe0a"
         ]
       }
     }

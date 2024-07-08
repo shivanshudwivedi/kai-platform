@@ -362,8 +362,53 @@ const createChatSession = onCall(async (props) => {
   }
 });
 
+/**
+ * Fetches the chat history for a specific user from Firestore.
+ *
+ * This function retrieves chat documents for a given userId from the 'chats' collection in Firestore.
+ * It ensures the userId is provided and orders the results by timestamp in descending order.
+ * Each chat entry in the result includes the chat ID and all its data fields.
+ *
+ * @function fetchChatHistory
+ * @param {object} data - The input data containing the userId.
+ * @param {string} data.userId - The unique identifier of the user whose chat history is to be fetched.
+ * @param {object} context - The context in which the function is called. Includes authentication details.
+ * @throws {HttpsError} If the userId is not provided or if there is an internal error during Firestore query execution.
+ * 
+ * @returns {object} An object containing the status of the request and the chat history data.
+ * @returns {string} returns.status - The status of the request ('success' if successful).
+ * @returns {Array} returns.data - An array of chat history objects, each containing an id and chat data.
+ */
+const fetchChatHistory = onCall(async (data, context) => {
+  try {
+    const { userId } = data;
+
+    if (!userId) {
+      throw new HttpsError('invalid-argument', 'Missing userId');
+    }
+
+    const chatHistorySnapshot = await admin
+      .firestore()
+      .collection('chats')
+      .where('userId', '==', userId)
+      .orderBy('timestamp', 'desc')
+      .get();
+
+    const chatHistory = chatHistorySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return { status: 'success', data: chatHistory };
+  } catch (error) {
+    console.error('Error fetching chat history:', error);
+    throw new HttpsError('internal', error.message);
+  }
+});
+
 module.exports = {
   chat,
   tool: https.onRequest(app),
   createChatSession,
+  fetchChatHistory
 };
