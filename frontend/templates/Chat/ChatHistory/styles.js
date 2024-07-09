@@ -24,13 +24,23 @@ export const styles = {
   chatSession: {
     cursor: "pointer",
     transition: "background-color 0.3s ease",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "10px",
+    width: "100%",
   },
   chatSessionHover: {
     backgroundColor: "black",
     color: "purple",
   },
   chatSessionText: {
+    display: "flex",
     color: "white",
+  },
+  chatTimeText: {
+    display: "flex",
+    justifyContent: "flex-end",
+    color: "#B791FF95",
   },
   h2: {
     color: "white",

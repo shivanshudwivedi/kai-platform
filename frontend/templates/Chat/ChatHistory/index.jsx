@@ -10,12 +10,21 @@ import {
 } from '@mui/icons-material';
 
 
+
 const truncateText = (text, maxLength) => {
   if (!text) return '';
   if (text.length <= maxLength) {
     return text;
   }
   return `${text.substring(0, maxLength)}...`;
+};
+
+const convertTimestampToDate = (timestamp) => {
+  const milliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+  const date = new Date(milliseconds);
+
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
 };
 
 const ChatHistory = ({ history }) => {
@@ -52,8 +61,12 @@ const handleChatSessionClick = (id) => {
               onClick={() => handleChatSessionClick(entry.id)}
             >
               <ListItemText
-                primary={truncateText(entry.messages[0]?.payload?.text || '', 20)}
+                primary={truncateText(entry.messages[0]?.payload?.text || '', 15)}
                 style={styles.chatSessionText}
+              />
+              <ListItemText
+                primary={convertTimestampToDate(entry.createdAt)}
+                style={styles.chatTimeText}
               />
             </ListItem>
           ))}
