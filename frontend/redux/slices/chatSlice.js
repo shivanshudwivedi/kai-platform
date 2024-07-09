@@ -1,13 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
+import { MESSAGE_ROLE, MESSAGE_TYPES } from "@/constants/bots";
 
 const initialState = {
-  input: '',
+  input: "",
   error: null,
   emaChat: {},
   chat: {},
   sessions: {},
+  allSessions: [],
   typing: false,
   chatUser: null,
   more: false,
@@ -23,13 +24,14 @@ const initialState = {
 };
 
 const chatSlice = createSlice({
-  name: 'chat',
+  name: "chat",
   initialState,
   reducers: {
     // eslint-disable-next-line no-unused-vars
     resetChat: (state, _) => ({
       ...initialState,
       sessions: state.sessions,
+      allSessions: state.allSessions,
     }),
     setInput: (state, action) => {
       state.input = action.payload;
@@ -39,8 +41,8 @@ const chatSlice = createSlice({
     },
     setMore: (state, action) => {
       const { role } = action.payload;
-      if (role === 'toggle') state.more = !state.more;
-      if (role === 'shutdown') state.more = false;
+      if (role === "toggle") state.more = !state.more;
+      if (role === "shutdown") state.more = false;
     },
     openInfoChat: (state) => {
       state.infoChatOpened = true;
@@ -70,7 +72,7 @@ const chatSlice = createSlice({
             ...state.chat,
             messages: [...(state.chat?.messages || []), message],
           },
-          input: '',
+          input: "",
         };
       }
 
@@ -80,7 +82,7 @@ const chatSlice = createSlice({
           ...state.chat,
           messages: [...(state.chat?.messages || []), response],
         },
-        input: '',
+        input: "",
       };
     },
     setSessionLoaded: (state, action) => {
@@ -92,7 +94,7 @@ const chatSlice = createSlice({
     setChatSession: (state, action) => {
       const session = action.payload;
 
-      localStorage.setItem('sessionId', session.id);
+      localStorage.setItem("sessionId", session.id);
 
       state.chat = session;
     },
@@ -125,10 +127,14 @@ const chatSlice = createSlice({
     setExerciseId: (state, action) => {
       state.exerciseId = action.payload;
     },
+    setAllSessions: (state, action) => {
+      state.allSessions = action.payload;
+    },
   },
 });
 
 export const {
+  setAllSessions,
   setInput,
   setMessages,
   setChatUser,
