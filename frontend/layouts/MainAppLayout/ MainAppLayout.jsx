@@ -11,7 +11,7 @@ import styles from './styles';
 
 import { setLoading } from '@/redux/slices/authSlice';
 import ChatHistory from '@/templates/Chat/ChatHistory';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import { setAllSessions } from '@/redux/slices/chatSlice';
 import { firestore } from '@/redux/store';
 import { all } from 'axios';
@@ -30,6 +30,8 @@ const MainAppLayout = (props) => {
   const dispatch = useDispatch();
   const router = useRouter(); // Initialize useRouter
 
+  const chat = useSelector((state) => state.chat);
+
   const { sessions, allSessions } = useSelector((state) => state.chat);
 
   const auth = useSelector((state) => state.auth);
@@ -43,24 +45,21 @@ const MainAppLayout = (props) => {
   const isLoading = auth.loading || !user.data || !auth.data;
 
   useEffect(() => {
-    const fetchUserSessions = async () => {
-      try {
-        const sessionsRef = collection(firestore, 'chatSessions');
-        const q = query(sessionsRef, where('user.id', '==', userData?.id));
-        console.log(userData?.id)
-        const sessionsSnapshot = await getDocs(q);
-        const sessionsData = sessionsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    if (!userData?.id) return;
 
-        dispatch(setAllSessions(sessionsData));
-      } catch (error) {
-        console.error('Error fetching user sessions:', error);
-      }
-    };
+    const sessionsRef = collection(firestore, 'chatSessions');
+    const q = query(sessionsRef, where('user.id', '==', userData.id));
 
-    if (userData?.id) {
-      fetchUserSessions();
-    }
-  }, [dispatch, userData?.id, allSessions]);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const sessionsData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      dispatch(setAllSessions(sessionsData));
+    }, (error) => {
+      console.error('Error fetching user sessions:', error);
+    });
+
+    // Clean up the subscription when the component unmounts
+    return () => unsubscribe();
+  }, [dispatch, firestore, userData?.id]);
 
   useEffect(() => {
     dispatch(setLoading(false));

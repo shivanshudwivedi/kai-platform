@@ -47,4 +47,24 @@ export const styles = {
     borderTopLeftRadius: "30px", // Rounded top left corner
     borderTopRightRadius: "30px", // Rounded top right corner
   },
+  mainContainerHover: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    backgroundColor: "white",
+    height: "100%",
+  },
+  h2ContainerHover: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "55px",
+    backgroundColor: "black",
+    borderRadius: "30px",
+    marginBottom: "30%",
+    marginRight: "10px",
+    boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+    border: "3px solid #B791FF95",
+  },
 };

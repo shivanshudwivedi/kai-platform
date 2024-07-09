@@ -20,7 +20,7 @@ const truncateText = (text, maxLength) => {
 
 const ChatHistory = ({ history }) => {
   const [hoveredSession, setHoveredSession] = useState(null);
-  const[display, setDisplay] = useState(true);
+  const [display, setDisplay] = useState(true);
   const dispatch = useDispatch();
 
   if (!history) {
@@ -63,8 +63,8 @@ const handleChatSessionClick = (id) => {
   }
   else {
     return (
-      <div style={styles.mainContainer}>
-          <div style = {styles.h2Container}>
+      <div style={styles.mainContainerHover}>
+          <div style = {styles.h2ContainerHover}>
             <h2 style={styles.h2}>Chat History</h2>
             {<Button startIcon={<OpenInFull />} onClick={() => setDisplay(true)}/> }
           </div>

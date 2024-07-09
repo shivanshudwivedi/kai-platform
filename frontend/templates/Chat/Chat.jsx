@@ -115,22 +115,24 @@ const ChatInterface = () => {
     let unsubscribe;
 
     if (sessionLoaded || currentSession) {
-      messagesContainerRef.current?.scrollTo(
-        0,
-        messagesContainerRef.current?.scrollHeight,
-        {
-          behavior: 'smooth',
-        }
-      );
+      const scrollMessages = () => {
+        messagesContainerRef.current?.scrollTo(
+          0,
+          messagesContainerRef.current?.scrollHeight,
+          {
+            behavior: 'smooth',
+          }
+        );
+      };
+
+      scrollMessages();
 
       const sessionRef = query(
         collection(firestore, 'chatSessions'),
         where('id', '==', sessionId)
       );
 
-      
-
-      unsubscribe = onSnapshot(sessionRef, async (snapshot) => {
+      unsubscribe = onSnapshot(sessionRef, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
           if (change.type === 'modified') {
             const updatedData = change.doc.data();
@@ -153,9 +155,9 @@ const ChatInterface = () => {
     }
 
     return () => {
-      if (sessionLoaded || currentSession) unsubscribe();
+      if (unsubscribe) unsubscribe();
     };
-  }, [sessionLoaded]);
+  }, [sessionLoaded, currentSession, sessionId, dispatch]);
 
 
 
@@ -215,6 +217,7 @@ const ChatInterface = () => {
     dispatch(setTyping(true));
 
     await sendMessage({ message, id: sessionId }, dispatch);
+    console.log("message sent");
   };
 
   const handleQuickReply = async (option) => {
