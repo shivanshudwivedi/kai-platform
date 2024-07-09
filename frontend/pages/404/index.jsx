@@ -1,16 +1,16 @@
-import { Box, Grid, Typography, useTheme } from '@mui/material';
-import { useRouter } from 'next/router';
+import { Box, Grid, Typography, useTheme } from "@mui/material";
+import { useRouter } from "next/router";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
-import MainAppLayout from '@/layouts/MainAppLayout';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
+import MainAppLayout from "@/layouts/MainAppLayout";
 
-import Planet from '@/assets/svg/planet.svg';
-import Star from '@/assets/svg/Star_3.svg';
-import YellowStar from '@/assets/svg/yellowStar.svg';
+import Planet from "@/assets/svg/planet.svg";
+import Star from "@/assets/svg/Star_3.svg";
+import YellowStar from "@/assets/svg/yellowStar.svg";
 
-import ROUTES from '@/constants/routes';
+import ROUTES from "@/constants/routes";
 
-import pageNotFoundStyles from '@/styles/pageNotFoundStyles';
+import pageNotFoundStyles from "@/styles/pageNotFoundStyles";
 
 /**
  * Renders the page for when the requested route is not found.
@@ -52,7 +52,7 @@ const PageNotFound = () => {
     return (
       <Grid {...pageNotFoundStyles.buttonGridProps}>
         <GradientOutlinedButton
-          bgcolor={theme.palette.Common.White['100p']}
+          bgcolor={theme.palette.Common.White["100p"]}
           clickHandler={handleRouteToHome}
           text="Go to Homepage"
           textColor="white"

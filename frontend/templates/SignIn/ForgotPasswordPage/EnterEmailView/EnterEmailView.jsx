@@ -1,19 +1,19 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Grid, Link, Typography, useTheme } from '@mui/material';
+import { Grid, Link, Typography, useTheme } from "@mui/material";
 
-import useWatchFields from '@/hooks/useWatchFields';
+import useWatchFields from "@/hooks/useWatchFields";
 
-import AuthTextField from '@/components/AuthTextField';
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import AuthTextField from "@/components/AuthTextField";
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
 
-import { FORGOT_PASSWORD_STEPS } from '@/constants/auth';
+import { FORGOT_PASSWORD_STEPS } from "@/constants/auth";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { auth } from '@/redux/store';
-import AUTH_REGEX from '@/regex/auth';
-import { sendPasswordReset } from '@/services/user/manageUser';
+import { auth } from "@/redux/store";
+import AUTH_REGEX from "@/regex/auth";
+import { sendPasswordReset } from "@/services/user/manageUser";
 
 const DEFAULT_ERR_STATE = {
   email: false,
@@ -21,7 +21,7 @@ const DEFAULT_ERR_STATE = {
 
 const WATCH_FIELDS = [
   {
-    fieldName: 'email',
+    fieldName: "email",
     regexPattern: AUTH_REGEX.email.regex,
   },
 ];
@@ -45,7 +45,7 @@ const EnterEmailView = (props) => {
         setStep(FORGOT_PASSWORD_STEPS.CHECK_INBOX);
       })
       .catch(() => {
-        setError({ email: { message: 'Could not send password reset' } });
+        setError({ email: { message: "Could not send password reset" } });
       })
       .finally(() => {
         setLoading(false);
@@ -108,7 +108,7 @@ const EnterEmailView = (props) => {
     return (
       <Grid {...styles.contentHelpGridProps}>
         <Typography>
-          Having trouble logging in?{' '}
+          Having trouble logging in?{" "}
           <Link {...styles.linkProps}>Contact Help Center</Link>
         </Typography>
       </Grid>

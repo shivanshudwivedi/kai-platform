@@ -1,9 +1,9 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 const BodyText =
-  'It\u0027s great having you here, but RadicalX is a desktop experience. Please try again from your computer to continue your journey. We can\u0027t wait to see you there';
+  "It\u0027s great having you here, but RadicalX is a desktop experience. Please try again from your computer to continue your journey. We can\u0027t wait to see you there";
 
 /**
  * Renders the entire AppDisable component.

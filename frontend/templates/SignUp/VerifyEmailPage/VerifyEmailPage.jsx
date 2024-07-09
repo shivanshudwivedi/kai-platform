@@ -1,18 +1,18 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import { Grid, Typography, useTheme } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { Grid, Typography, useTheme } from "@mui/material";
+import { useSelector } from "react-redux";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
 
-import RocketIcon from '@/assets/svg/rocket.svg';
+import RocketIcon from "@/assets/svg/rocket.svg";
 
-import ALERT_COLORS from '@/constants/notification';
+import ALERT_COLORS from "@/constants/notification";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { AuthContext } from '@/providers/GlobalProvider';
-import { sendVerification } from '@/services/user/manageUser';
+import { AuthContext } from "@/providers/GlobalProvider";
+import { sendVerification } from "@/services/user/manageUser";
 
 const VerifyEmailPage = (props) => {
   const { email } = props;
@@ -41,11 +41,11 @@ const VerifyEmailPage = (props) => {
     try {
       setLoading(true);
       await sendVerification(authData);
-      handleOpenSnackBar(ALERT_COLORS.SUCCESS, 'Email verification sent');
+      handleOpenSnackBar(ALERT_COLORS.SUCCESS, "Email verification sent");
     } catch (error) {
       handleOpenSnackBar(
         ALERT_COLORS.ERROR,
-        'Error sending email verification'
+        "Error sending email verification"
       );
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ const VerifyEmailPage = (props) => {
     return (
       <Grid {...styles.textGridProps}>
         <Typography {...styles.mainMsgProps}>
-          We sent an email to{' '}
+          We sent an email to{" "}
           <Typography {...styles.emailProps}>{email}</Typography>
         </Typography>
       </Grid>
@@ -106,9 +106,9 @@ const VerifyEmailPage = (props) => {
         <GradientOutlinedButton
           bgcolor={theme.palette.Dark_Colors.Dark[1]}
           text={`Resend Verification Email ${
-            authData && seconds > 0 ? `${seconds}s` : ''
+            authData && seconds > 0 ? `${seconds}s` : ""
           }`}
-          textColor={theme.palette.Common.White['100p']}
+          textColor={theme.palette.Common.White["100p"]}
           disabled={seconds > 0 || !authData}
           loading={loading}
           clickHandler={handleResend}

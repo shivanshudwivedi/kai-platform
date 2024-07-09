@@ -1,8 +1,8 @@
-import { CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid } from "@mui/material";
 
-import AuthLayout from '@/layouts/AuthLayout';
+import AuthLayout from "@/layouts/AuthLayout";
 
-import sharedStyles from '@/styles/shared/sharedStyles';
+import sharedStyles from "@/styles/shared/sharedStyles";
 
 const Redirect = () => {
   return (

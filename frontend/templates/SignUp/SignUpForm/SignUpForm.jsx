@@ -1,31 +1,31 @@
-import { useContext, useState } from 'react';
+import { useContext, useState } from "react";
 
-import { Grid, useTheme } from '@mui/material';
-import { FormContainer } from 'react-hook-form-mui';
+import { Grid, useTheme } from "@mui/material";
+import { FormContainer } from "react-hook-form-mui";
 
-import useWatchFields from '@/hooks/useWatchFields';
+import useWatchFields from "@/hooks/useWatchFields";
 
-import AuthTextField from '@/components/AuthTextField';
+import AuthTextField from "@/components/AuthTextField";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
 
-import { AUTH_STEPS, VALIDATION_STATES } from '@/constants/auth';
-import ALERT_COLORS from '@/constants/notification';
+import { AUTH_STEPS, VALIDATION_STATES } from "@/constants/auth";
+import ALERT_COLORS from "@/constants/notification";
 
-import styles from './styles';
+import styles from "./styles";
 
-import sharedStyles from '@/styles/shared/sharedStyles';
+import sharedStyles from "@/styles/shared/sharedStyles";
 
-import { AuthContext } from '@/providers/GlobalProvider';
-import AUTH_REGEX from '@/regex/auth';
-import { signUp } from '@/services/user/signUp';
-import { validatePassword } from '@/utils/AuthUtils';
+import { AuthContext } from "@/providers/GlobalProvider";
+import AUTH_REGEX from "@/regex/auth";
+import { signUp } from "@/services/user/signUp";
+import { validatePassword } from "@/utils/AuthUtils";
 
 const DEFAULT_FORM_VALUES = {
-  email: '',
-  fullName: '',
-  password: '',
-  reEnterPassword: '',
+  email: "",
+  fullName: "",
+  password: "",
+  reEnterPassword: "",
 };
 
 const DEFAULT_ERR_STATE = {
@@ -37,19 +37,19 @@ const DEFAULT_ERR_STATE = {
 
 const WATCH_FIELDS = [
   {
-    fieldName: 'password',
+    fieldName: "password",
     regexPattern: AUTH_REGEX.password.regex,
   },
   {
-    fieldName: 'reEnterPassword',
+    fieldName: "reEnterPassword",
     regexPattern: AUTH_REGEX.password.regex,
   },
   {
-    fieldName: 'email',
+    fieldName: "email",
     regexPattern: AUTH_REGEX.email.regex,
   },
   {
-    fieldName: 'fullName',
+    fieldName: "fullName",
     regexPattern: AUTH_REGEX.fullName.regex,
   },
 ];
@@ -83,16 +83,16 @@ const SignUpForm = (props) => {
       return VALIDATION_STATES.SUCCESS;
     }
 
-    if (password.value === '') return VALIDATION_STATES.DEFAULT;
+    if (password.value === "") return VALIDATION_STATES.DEFAULT;
 
     return VALIDATION_STATES.ERROR;
   };
 
   const submitButtonText = () => {
     if (step === AUTH_STEPS.EMAIL) {
-      return 'Continue';
+      return "Continue";
     }
-    return 'Sign Up';
+    return "Sign Up";
   };
 
   const handleSubmit = async () => {
@@ -109,8 +109,8 @@ const SignUpForm = (props) => {
       if (!fullName.valid && !email.valid) {
         setError({
           ...error,
-          fullName: { message: 'Full name is required' },
-          email: { message: 'Email address is required' },
+          fullName: { message: "Full name is required" },
+          email: { message: "Email address is required" },
         });
         return;
       }
@@ -118,7 +118,7 @@ const SignUpForm = (props) => {
       if (!fullName.valid) {
         setError({
           ...error,
-          fullName: { message: 'Full name is required' },
+          fullName: { message: "Full name is required" },
         });
         return;
       }
@@ -126,7 +126,7 @@ const SignUpForm = (props) => {
       if (!email.valid) {
         setError({
           ...error,
-          email: { message: 'Email address is required' },
+          email: { message: "Email address is required" },
         });
         return;
       }
@@ -144,7 +144,7 @@ const SignUpForm = (props) => {
         await signUp(email.value, password.value, fullName.value);
         handleOpenSnackBar(
           ALERT_COLORS.SUCCESS,
-          'Account created successfully'
+          "Account created successfully"
         );
 
         setEmail(email.value);
@@ -237,7 +237,7 @@ const SignUpForm = (props) => {
           error={!!error.reEnterPassword}
           helperText={
             !passwordMatch && !!password.value
-              ? 'Password does not match'
+              ? "Password does not match"
               : error.reEnterPassword?.message
           }
           state={setReEnterPasswordStatus()}
@@ -255,7 +255,7 @@ const SignUpForm = (props) => {
       <GradientOutlinedButton
         bgcolor={theme.palette.Dark_Colors.Dark[1]}
         loading={step === AUTH_STEPS.PASSWORD && loading}
-        textColor={theme.palette.Common.White['100p']}
+        textColor={theme.palette.Common.White["100p"]}
         clickHandler={handleSubmit}
         text={submitButtonText()}
         {...styles.submitButtonProps}

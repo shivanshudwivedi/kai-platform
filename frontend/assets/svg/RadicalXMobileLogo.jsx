@@ -1,4 +1,4 @@
-const RadicalXMobileLogo = ({ width = '36', height = '36' }) => {
+const RadicalXMobileLogo = ({ width = "36", height = "36" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

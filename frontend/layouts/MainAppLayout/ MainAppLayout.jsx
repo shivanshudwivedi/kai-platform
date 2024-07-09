@@ -1,17 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { Grid, useMediaQuery } from '@mui/material';
-import Head from 'next/head';
+import { Grid, useMediaQuery } from "@mui/material";
+import Head from "next/head";
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
-import AppDisabled from '@/components/AppDisabled';
-import Loader from '@/components/Loader';
+import AppDisabled from "@/components/AppDisabled";
+import Loader from "@/components/Loader";
 
-import SideMenu from './SideMenu';
-import styles from './styles';
+import SideMenu from "./SideMenu";
+import styles from "./styles";
 
-import { setLoading } from '@/redux/slices/authSlice';
+import { setLoading } from "@/redux/slices/authSlice";
 
 /**
  * Renders the main application layout.
@@ -30,7 +30,7 @@ const MainAppLayout = (props) => {
   const user = useSelector((state) => state.user);
 
   const isTabletScreen = useMediaQuery((theme) =>
-    theme.breakpoints.down('laptop')
+    theme.breakpoints.down("laptop")
   );
 
   const isLoading = auth.loading || !user.data || !auth.data;

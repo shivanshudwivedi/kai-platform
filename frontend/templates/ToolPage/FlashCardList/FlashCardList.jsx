@@ -1,8 +1,8 @@
-import { Fade, Grid, Typography } from '@mui/material';
+import { Fade, Grid, Typography } from "@mui/material";
 
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-import styles from './styles';
+import styles from "./styles";
 
 const FlashCardList = () => {
   const { response } = useSelector((state) => state.tools);

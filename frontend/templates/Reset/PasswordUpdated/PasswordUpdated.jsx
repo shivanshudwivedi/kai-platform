@@ -1,14 +1,14 @@
-import { Grid, Link, Typography, useTheme } from '@mui/material';
-import { signOut } from 'firebase/auth';
-import { useRouter } from 'next/router';
+import { Grid, Link, Typography, useTheme } from "@mui/material";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/router";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
 
-import ROUTES from '@/constants/routes';
+import ROUTES from "@/constants/routes";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { auth } from '@/redux/store';
+import { auth } from "@/redux/store";
 
 const PasswordUpdated = () => {
   const router = useRouter();
@@ -43,7 +43,7 @@ const PasswordUpdated = () => {
       <Grid {...styles.buttonGridProps}>
         <GradientOutlinedButton
           bgcolor={theme.palette.Dark_Colors.Dark[1]}
-          textColor={theme.palette.Common.White['100p']}
+          textColor={theme.palette.Common.White["100p"]}
           text="Login"
           clickHandler={handleGoToSignIn}
           {...styles.submitButtonProps}
@@ -56,7 +56,7 @@ const PasswordUpdated = () => {
     return (
       <Grid {...styles.contentHelpGridProps}>
         <Typography>
-          Having trouble logging in?{' '}
+          Having trouble logging in?{" "}
           <Link {...styles.linkProps}>Contact Help Center</Link>
         </Typography>
       </Grid>

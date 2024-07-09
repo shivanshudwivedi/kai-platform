@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
-import { firestore } from '@/redux/store';
-import fetchTools from '@/redux/thunks/tools';
+import { firestore } from "@/redux/store";
+import fetchTools from "@/redux/thunks/tools";
 
 /**
  * Returns properties used in the ToolPage component.

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { Box, Fade, Grid } from '@mui/material';
+import { Box, Fade, Grid } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 const ChatSpinner = () => {
   const [showSpinner, setShowSpinner] = useState(false);

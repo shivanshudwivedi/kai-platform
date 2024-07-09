@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Grid,
   IconButton,
@@ -8,26 +8,26 @@ import {
   Link,
   Typography,
   useTheme,
-} from '@mui/material';
-import { confirmPasswordReset } from 'firebase/auth';
-import { useRouter } from 'next/router';
+} from "@mui/material";
+import { confirmPasswordReset } from "firebase/auth";
+import { useRouter } from "next/router";
 
-import useWatchFields from '@/hooks/useWatchFields';
+import useWatchFields from "@/hooks/useWatchFields";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
-import Loader from '@/components/Loader';
-import ProfileInputField from '@/components/ProfileInputField';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
+import Loader from "@/components/Loader";
+import ProfileInputField from "@/components/ProfileInputField";
 
-import ROUTES from '@/constants/routes';
+import ROUTES from "@/constants/routes";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { auth } from '@/redux/store';
-import AUTH_REGEX from '@/regex/auth';
+import { auth } from "@/redux/store";
+import AUTH_REGEX from "@/regex/auth";
 
 const WATCH_FIELDS = [
   {
-    fieldName: 'password',
+    fieldName: "password",
     regexPattern: AUTH_REGEX.password.regex,
   },
 ];
@@ -65,7 +65,7 @@ const ResetPassword = (props) => {
         handleSwitch();
       })
       .catch(() => {
-        setError({ email: { message: 'Could not reset password' } });
+        setError({ email: { message: "Could not reset password" } });
       })
       .finally(() => {
         setLoading(false);
@@ -126,7 +126,7 @@ const ResetPassword = (props) => {
           bgcolor={theme.palette.Dark_Colors.Dark[1]}
           text="Reset Password"
           disabled={!password.valid || loading}
-          textColor={theme.palette.Common.White['100p']}
+          textColor={theme.palette.Common.White["100p"]}
           loading={loading}
           clickHandler={handleSubmit}
           {...styles.submitButtonProps}
@@ -139,7 +139,7 @@ const ResetPassword = (props) => {
     return (
       <Grid {...styles.contentHelpGridProps}>
         <Typography>
-          Having trouble logging in?{' '}
+          Having trouble logging in?{" "}
           <Link {...styles.linkProps}>Contact Help Center</Link>
         </Typography>
       </Grid>

@@ -1,10 +1,10 @@
-import { forwardRef } from 'react';
+import { forwardRef } from "react";
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Typography } from '@mui/material';
-import { SelectElement } from 'react-hook-form-mui';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Typography } from "@mui/material";
+import { SelectElement } from "react-hook-form-mui";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Generates a reusable selector component with a required title and an optional description.

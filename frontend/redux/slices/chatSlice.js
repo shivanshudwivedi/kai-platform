@@ -20,14 +20,15 @@ const initialState = {
   historyLoaded: false,
   streamingDone: false,
   streaming: false,
+  chatHistory: [],
+  showChatHistory: false,
 };
 
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    // eslint-disable-next-line no-unused-vars
-    resetChat: (state, _) => ({
+    resetChat: (state) => ({
       ...initialState,
       sessions: state.sessions,
     }),
@@ -64,24 +65,12 @@ const chatSlice = createSlice({
           },
         };
 
-        return {
-          ...state,
-          chat: {
-            ...state.chat,
-            messages: [...(state.chat?.messages || []), message],
-          },
-          input: '',
-        };
+        state.chat.messages = [...(state.chat?.messages || []), message];
+        state.input = '';
+      } else {
+        state.chat.messages = [...(state.chat?.messages || []), response];
+        state.input = '';
       }
-
-      return {
-        ...state,
-        chat: {
-          ...state.chat,
-          messages: [...(state.chat?.messages || []), response],
-        },
-        input: '',
-      };
     },
     setSessionLoaded: (state, action) => {
       state.sessionLoaded = action.payload;
@@ -91,9 +80,7 @@ const chatSlice = createSlice({
     },
     setChatSession: (state, action) => {
       const session = action.payload;
-
       localStorage.setItem('sessionId', session.id);
-
       state.chat = session;
     },
     setTyping: (state, action) => {
@@ -125,6 +112,12 @@ const chatSlice = createSlice({
     setExerciseId: (state, action) => {
       state.exerciseId = action.payload;
     },
+    setChatHistory: (state, action) => {
+      state.chatHistory = action.payload;
+    },
+    setShowChatHistory: (state, action) => {
+      state.showChatHistory = action.payload;
+    },
   },
 });
 
@@ -139,7 +132,6 @@ export const {
   closeSettingsChat,
   closeInfoChat,
   setTyping,
-  setBotFeature,
   setFullyScrolled,
   resetChat,
   setExerciseId,
@@ -147,10 +139,10 @@ export const {
   setChatStarted,
   setStreamingDone,
   setSelectedOption,
-  setEMAMessages,
-  resetExplainMyAnswer,
   setStreaming,
   setHistoryLoaded,
+  setChatHistory,
+  setShowChatHistory,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -1,16 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { applyActionCode } from 'firebase/auth';
-import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
+import { applyActionCode } from "firebase/auth";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 
-import { AUTH_MODES } from '@/constants/auth';
-import ALERT_COLORS from '@/constants/notification';
-import ROUTES from '@/constants/routes';
+import { AUTH_MODES } from "@/constants/auth";
+import ALERT_COLORS from "@/constants/notification";
+import ROUTES from "@/constants/routes";
 
-import { setEmailVerified, setLoading } from '@/redux/slices/authSlice';
-import { auth } from '@/redux/store';
-import fetchUserData from '@/redux/thunks/user';
+import { setEmailVerified, setLoading } from "@/redux/slices/authSlice";
+import { auth } from "@/redux/store";
+import fetchUserData from "@/redux/thunks/user";
 
 const redirectRegex = /\/redirect.*/;
 
@@ -26,7 +26,7 @@ const useRedirect = (firestore, functions, handleOpenSnackBar) => {
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     // Check if the current route is an authentication route
     const isAuthUrl = [
@@ -85,7 +85,7 @@ const useRedirect = (firestore, functions, handleOpenSnackBar) => {
           dispatch(setEmailVerified(true));
           router.push(`${ROUTES.HOME}`);
         } catch (error) {
-          handleOpenSnackBar(ALERT_COLORS.ERROR, 'Unable to verify email');
+          handleOpenSnackBar(ALERT_COLORS.ERROR, "Unable to verify email");
           router.push(`${ROUTES.SIGNUP}`);
           throw new Error(error);
         }

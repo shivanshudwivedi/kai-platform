@@ -1,15 +1,20 @@
-import { Head, Html, Main, NextScript } from 'next/document';
+import Document, { Html, Head, Main, NextScript } from "next/document";
 
-const Document = () => {
-  return (
-    <Html lang="en">
-      <Head />
-      <body style={{ backgroundColor: '#292B2F' }}>
-        <Main />
-        <NextScript />
-      </body>
-    </Html>
-  );
-};
+class MyDocument extends Document {
+  render() {
+    return (
+      <Html lang="en">
+        <Head>
+          {/* Add any additional meta tags or links here */}
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <body style={{ backgroundColor: "#292B2F" }}>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
 
-export default Document;
+export default MyDocument;

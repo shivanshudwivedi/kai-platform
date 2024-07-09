@@ -20,8 +20,8 @@ import { MESSAGE_ROLE, MESSAGE_TYPES } from "@/constants/bots";
 import CenterChatContentNoMessages from "./CenterChatContentNoMessages";
 import ChatSpinner from "./ChatSpinner";
 import Message from "./Message";
-import ChatHistory from "@../../components/ChatHistory/ChatHistory";
-import { fetchChatHistory } from "@../../components/FetchChatHistory/function";
+import ChatHistory from "@/components/ChatHistory/ChatHistory";
+import { fetchChatHistory } from "@/components/FetchChatHistory/function";
 import styles from "./styles";
 import {
   openInfoChat,
@@ -36,6 +36,8 @@ import {
   setStreaming,
   setStreamingDone,
   setTyping,
+  setChatHistory,
+  setShowChatHistory,
 } from "@/redux/slices/chatSlice";
 import { firestore } from "@/redux/store";
 import createChatSession from "@/services/chatbot/createChatSession";
@@ -43,26 +45,6 @@ import sendMessage from "@/services/chatbot/sendMessage";
 
 const ChatInterface = () => {
   const messagesContainerRef = useRef();
-
-  const [showChatHistory, setShowChatHistory] = useState(false);
-  const [chatHistoryData, setChatHistoryData] = useState([]);
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const history = await fetchChatHistory(userData.id);
-        setChatHistoryData(history);
-      } catch (error) {
-        console.error("Error fetching chat history:", error);
-      }
-    };
-    fetchHistory();
-  }, [userData.id]);
-
-  const toggleChatHistory = () => {
-    setShowChatHistory(!showChatHistory);
-  };
-
   const dispatch = useDispatch();
   const {
     more,
@@ -76,33 +58,122 @@ const ChatInterface = () => {
     streamingDone,
     streaming,
     error,
+    chatHistory,
+    showChatHistory,
   } = useSelector((state) => state.chat);
   const { data: userData } = useSelector((state) => state.user);
 
   const sessionId = localStorage.getItem("sessionId");
-
   const currentSession = chat;
-  const chatMessages = currentSession?.messages || chatHistoryData?.messages;
+  const chatMessages = currentSession?.messages || [];
   const showNewMessageIndicator = !fullyScrolled && streamingDone;
 
-  const renderChatHistory = () => {
-    if (showChatHistory) {
-      return (
-        <ChatHistory
-          history={chatHistoryData}
-          onClose={() => setShowChatHistory(false)}
-        />
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const history = await fetchChatHistory(userData.id);
+        dispatch(setChatHistory(history));
+      } catch (error) {
+        console.error("Error fetching chat history:", error);
+      }
+    };
+    fetchHistory();
+  }, [userData.id, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("sessionId");
+      dispatch(resetChat());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    let unsubscribe;
+
+    if (sessionLoaded || currentSession) {
+      messagesContainerRef.current?.scrollTo(
+        0,
+        messagesContainerRef.current?.scrollHeight,
+        { behavior: "smooth" }
       );
+
+      const sessionRef = query(
+        collection(firestore, "chatSessions"),
+        where("id", "==", sessionId)
+      );
+
+      unsubscribe = onSnapshot(sessionRef, async (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "modified") {
+            const updatedData = change.doc.data();
+            const updatedMessages = updatedData.messages;
+            const lastMessage = updatedMessages[updatedMessages.length - 1];
+
+            if (lastMessage?.role === MESSAGE_ROLE.AI) {
+              dispatch(
+                setMessages({ role: MESSAGE_ROLE.AI, response: lastMessage })
+              );
+              dispatch(setTyping(false));
+            }
+          }
+        });
+      });
     }
-    return null;
+
+    return () => {
+      if (sessionLoaded || currentSession) unsubscribe();
+    };
+  }, [sessionLoaded, currentSession, sessionId, dispatch]);
+
+  const handleOnScroll = () => {
+    const scrolled =
+      Math.abs(
+        messagesContainerRef.current.scrollHeight -
+          messagesContainerRef.current.clientHeight -
+          messagesContainerRef.current.scrollTop
+      ) <= 1;
+
+    if (fullyScrolled !== scrolled) dispatch(setFullyScrolled(scrolled));
+  };
+
+  const handleScrollToBottom = () => {
+    messagesContainerRef.current?.scrollTo(
+      0,
+      messagesContainerRef.current?.scrollHeight,
+      { behavior: "smooth" }
+    );
+    dispatch(setStreamingDone(false));
+  };
+
+  const handleSendMessage = async () => {
+    dispatch(setStreaming(true));
+
+    if (!input) {
+      dispatch(setError("Please enter a message"));
+      setTimeout(() => {
+        dispatch(setError(null));
+      }, 3000);
+      return;
+    }
+
+    const message = {
+      role: MESSAGE_ROLE.HUMAN,
+      type: MESSAGE_TYPES.TEXT,
+      payload: { text: input },
+    };
+
+    if (!chatMessages.length) {
+      await startConversation(message);
+      return;
+    }
+
+    dispatch(setMessages({ role: MESSAGE_ROLE.HUMAN }));
+    dispatch(setTyping(true));
+    await sendMessage({ message, id: sessionId }, dispatch);
   };
 
   const startConversation = async (message) => {
-    dispatch(
-      setMessages({
-        role: MESSAGE_ROLE.AI,
-      })
-    );
+    dispatch(setMessages({ role: MESSAGE_ROLE.AI }));
     dispatch(setTyping(true));
 
     const chatPayload = {
@@ -124,127 +195,6 @@ const ChatInterface = () => {
     dispatch(setSessionLoaded(true));
   };
 
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem("sessionId");
-      dispatch(resetChat());
-    };
-  }, []);
-
-  useEffect(() => {
-    let unsubscribe;
-
-    if (sessionLoaded || currentSession) {
-      messagesContainerRef.current?.scrollTo(
-        0,
-        messagesContainerRef.current?.scrollHeight,
-        {
-          behavior: "smooth",
-        }
-      );
-
-      const sessionRef = query(
-        collection(firestore, "chatSessions"),
-        where("id", "==", sessionId)
-      );
-
-      unsubscribe = onSnapshot(sessionRef, async (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "modified") {
-            const updatedData = change.doc.data();
-            const updatedMessages = updatedData.messages;
-
-            const lastMessage = updatedMessages[updatedMessages.length - 1];
-
-            if (lastMessage?.role === MESSAGE_ROLE.AI) {
-              dispatch(
-                setMessages({
-                  role: MESSAGE_ROLE.AI,
-                  response: lastMessage,
-                })
-              );
-              dispatch(setTyping(false));
-            }
-          }
-        });
-      });
-    }
-
-    return () => {
-      if (sessionLoaded || currentSession) unsubscribe();
-    };
-  }, [sessionLoaded]);
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const history = await fetchChatHistory(userData.id);
-        setChatHistoryData(history);
-      } catch (error) {
-        console.error("Error fetching chat history:", error);
-      }
-    };
-    fetchHistory();
-  }, [userData.id]);
-
-  const handleOnScroll = () => {
-    const scrolled =
-      Math.abs(
-        messagesContainerRef.current.scrollHeight -
-          messagesContainerRef.current.clientHeight -
-          messagesContainerRef.current.scrollTop
-      ) <= 1;
-
-    if (fullyScrolled !== scrolled) dispatch(setFullyScrolled(scrolled));
-  };
-
-  const handleScrollToBottom = () => {
-    messagesContainerRef.current?.scrollTo(
-      0,
-      messagesContainerRef.current?.scrollHeight,
-      {
-        behavior: "smooth",
-      }
-    );
-
-    dispatch(setStreamingDone(false));
-  };
-
-  const handleSendMessage = async () => {
-    dispatch(setStreaming(true));
-
-    if (!input) {
-      dispatch(setError("Please enter a message"));
-      setTimeout(() => {
-        dispatch(setError(null));
-      }, 3000);
-      return;
-    }
-
-    const message = {
-      role: MESSAGE_ROLE.HUMAN,
-      type: MESSAGE_TYPES.TEXT,
-      payload: {
-        text: input,
-      },
-    };
-
-    if (!chatMessages) {
-      await startConversation(message);
-      return;
-    }
-
-    dispatch(
-      setMessages({
-        role: MESSAGE_ROLE.HUMAN,
-      })
-    );
-
-    dispatch(setTyping(true));
-
-    await sendMessage({ message, id: sessionId }, dispatch);
-  };
-
   const handleQuickReply = async (option) => {
     dispatch(setInput(option));
     dispatch(setStreaming(true));
@@ -252,16 +202,10 @@ const ChatInterface = () => {
     const message = {
       role: MESSAGE_ROLE.HUMAN,
       type: MESSAGE_TYPES.QUICK_REPLY,
-      payload: {
-        text: option,
-      },
+      payload: { text: option },
     };
 
-    dispatch(
-      setMessages({
-        role: MESSAGE_ROLE.HUMAN,
-      })
-    );
+    dispatch(setMessages({ role: MESSAGE_ROLE.HUMAN }));
     dispatch(setTyping(true));
 
     await sendMessage({ message, id: currentSession?.id }, dispatch);
@@ -272,20 +216,18 @@ const ChatInterface = () => {
     if (e.keyCode === 13) handleSendMessage();
   };
 
-  const renderSendIcon = () => {
-    return (
-      <InputAdornment position="end">
-        <IconButton
-          onClick={handleSendMessage}
-          {...styles.bottomChatContent.iconButtonProps(
-            typing || error || !input || streaming
-          )}
-        >
-          <NavigationIcon />
-        </IconButton>
-      </InputAdornment>
-    );
-  };
+  const renderSendIcon = () => (
+    <InputAdornment position="end">
+      <IconButton
+        onClick={handleSendMessage}
+        {...styles.bottomChatContent.iconButtonProps(
+          typing || error || !input || streaming
+        )}
+      >
+        <NavigationIcon />
+      </IconButton>
+    </InputAdornment>
+  );
 
   const renderMoreChat = () => {
     if (!more) return null;
@@ -352,17 +294,15 @@ const ChatInterface = () => {
     return null;
   };
 
-  const renderNewMessageIndicator = () => {
-    return (
-      <Fade in={showNewMessageIndicator}>
-        <Button
-          startIcon={<ArrowDownwardOutlined />}
-          onClick={handleScrollToBottom}
-          {...styles.newMessageButtonProps}
-        />
-      </Fade>
-    );
-  };
+  const renderNewMessageIndicator = () => (
+    <Fade in={showNewMessageIndicator}>
+      <Button
+        startIcon={<ArrowDownwardOutlined />}
+        onClick={handleScrollToBottom}
+        {...styles.newMessageButtonProps}
+      />
+    </Fade>
+  );
 
   const renderBottomChatContent = () => {
     if (!openSettingsChat && !infoChatOpened)
@@ -393,11 +333,14 @@ const ChatInterface = () => {
   return (
     <Grid {...styles.mainGridProps}>
       {renderMoreChat()}
-      <Button onClick={toggleChatHistory}>
+      <Button onClick={() => dispatch(setShowChatHistory(!showChatHistory))}>
         {showChatHistory ? "Hide History" : "Show History"}
       </Button>
       {showChatHistory ? (
-        renderChatHistory()
+        <ChatHistory
+          history={chatHistory}
+          onClose={() => dispatch(setShowChatHistory(false))}
+        />
       ) : (
         <>
           {renderCenterChatContent()}

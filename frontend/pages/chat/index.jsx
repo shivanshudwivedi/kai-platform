@@ -1,5 +1,5 @@
-import MainAppLayout from '@/layouts/MainAppLayout';
-import Chat from '@/templates/Chat';
+import MainAppLayout from "@/layouts/MainAppLayout";
+import Chat from "@/templates/Chat";
 
 const KaiChat = () => {
   return <Chat />;

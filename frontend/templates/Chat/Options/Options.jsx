@@ -1,6 +1,6 @@
-import { Button, Fade, Grid } from '@mui/material';
+import { Button, Fade, Grid } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 const Options = (props) => {
   const { options, onQuickReply, show } = props;

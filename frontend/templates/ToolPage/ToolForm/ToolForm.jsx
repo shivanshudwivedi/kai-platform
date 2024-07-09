@@ -1,30 +1,30 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { Help } from '@mui/icons-material';
-import { Grid, Tooltip, Typography, useTheme } from '@mui/material';
-import { FormContainer } from 'react-hook-form-mui';
-import { useDispatch, useSelector } from 'react-redux';
+import { Help } from "@mui/icons-material";
+import { Grid, Tooltip, Typography, useTheme } from "@mui/material";
+import { FormContainer } from "react-hook-form-mui";
+import { useDispatch, useSelector } from "react-redux";
 
-import useWatchFields from '@/hooks/useWatchFields';
+import useWatchFields from "@/hooks/useWatchFields";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
-import PrimaryFileUpload from '@/components/PrimaryFileUpload';
-import PrimarySelectorInput from '@/components/PrimarySelectorInput';
-import PrimaryTextFieldInput from '@/components/PrimaryTextFieldInput';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
+import PrimaryFileUpload from "@/components/PrimaryFileUpload";
+import PrimarySelectorInput from "@/components/PrimarySelectorInput";
+import PrimaryTextFieldInput from "@/components/PrimaryTextFieldInput";
 
-import { INPUT_TYPES } from '@/constants/inputs';
-import ALERT_COLORS from '@/constants/notification';
+import { INPUT_TYPES } from "@/constants/inputs";
+import ALERT_COLORS from "@/constants/notification";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { AuthContext } from '@/providers/GlobalProvider';
+import { AuthContext } from "@/providers/GlobalProvider";
 import {
   setCommunicatorLoading,
   setFormOpen,
   setPrompt,
   setResponse,
-} from '@/redux/slices/toolsSlice';
-import submitPrompt from '@/services/tools/submitPrompt';
+} from "@/redux/slices/toolsSlice";
+import submitPrompt from "@/services/tools/submitPrompt";
 
 const ToolForm = (props) => {
   const { id, inputs } = props;
@@ -54,7 +54,7 @@ const ToolForm = (props) => {
       const response = await submitPrompt(
         {
           tool_data: { tool_id: id, inputs: updateData },
-          type: 'tool',
+          type: "tool",
           user: {
             id: userData?.id,
             fullName: userData?.fullName,
@@ -71,7 +71,7 @@ const ToolForm = (props) => {
       dispatch(setCommunicatorLoading(false));
       handleOpenSnackBar(
         ALERT_COLORS.ERROR,
-        error?.message || 'Couldn\u0027t send prompt'
+        error?.message || "Couldn\u0027t send prompt"
       );
     }
   };
@@ -104,7 +104,7 @@ const ToolForm = (props) => {
           placeholder={placeholder}
           helperText={errors?.[inputName]?.message}
           validation={{
-            required: 'Field is required',
+            required: "Field is required",
           }}
           ref={register}
         />
@@ -143,10 +143,10 @@ const ToolForm = (props) => {
           control={control}
           ref={register}
           extraInputProps={{
-            color: 'black',
+            color: "black",
           }}
           validation={{
-            required: 'Please select an option.',
+            required: "Please select an option.",
           }}
         />
       </Grid>
@@ -176,10 +176,10 @@ const ToolForm = (props) => {
           displayEmpty
           setValue={setValue}
           validation={{
-            required: 'Please upload a file.',
+            required: "Please upload a file.",
             validate: {
               lessThanThree: (v) =>
-                parseInt(v?.length, 10) < 10 || 'Should be less than 3 files',
+                parseInt(v?.length, 10) < 10 || "Should be less than 3 files",
             },
           }}
         />
@@ -192,9 +192,9 @@ const ToolForm = (props) => {
       <Grid mt={4} {...styles.actionButtonGridProps}>
         <GradientOutlinedButton
           id="submitButton"
-          bgcolor={theme.palette.Common.White['100p']}
+          bgcolor={theme.palette.Common.White["100p"]}
           text="Generate"
-          textColor={theme.palette.Common.White['100p']}
+          textColor={theme.palette.Common.White["100p"]}
           loading={communicatorLoading}
           onHoverTextColor={theme.palette.Background.purple}
           type="submit"
@@ -221,7 +221,7 @@ const ToolForm = (props) => {
   return (
     <FormContainer
       FormProps={{
-        id: 'tool-form',
+        id: "tool-form",
       }}
       onSuccess={handleSubmit(handleSubmitMultiForm)}
     >

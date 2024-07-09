@@ -1,6 +1,6 @@
-import { Button, CircularProgress, Grid, useTheme } from '@mui/material';
+import { Button, CircularProgress, Grid, useTheme } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Function for rendering a gradient outlined button with optional icon, text, and loading state.
@@ -55,7 +55,7 @@ const GradientOutlinedButton = (props) => {
   };
 
   const renderButtonContent = () => {
-    if (iconPlacement === 'left') {
+    if (iconPlacement === "left") {
       return (
         <>
           {icon}
@@ -86,7 +86,7 @@ const GradientOutlinedButton = (props) => {
       )}
     >
       <Button
-        id={id || 'button-selector'}
+        id={id || "button-selector"}
         disabled={loading || disabled}
         onClick={clickHandler}
         {...styles.buttonProps(

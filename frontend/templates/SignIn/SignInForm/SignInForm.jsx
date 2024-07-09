@@ -1,34 +1,34 @@
-import { useContext, useState } from 'react';
+import { useContext, useState } from "react";
 
-import { Grid, Link, useTheme } from '@mui/material';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { useRouter } from 'next/router';
+import { Grid, Link, useTheme } from "@mui/material";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { useRouter } from "next/router";
 
-import { FormContainer } from 'react-hook-form-mui';
-import { useDispatch } from 'react-redux';
+import { FormContainer } from "react-hook-form-mui";
+import { useDispatch } from "react-redux";
 
-import AuthTextField from '@/components/AuthTextField';
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import AuthTextField from "@/components/AuthTextField";
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
 
-import { AUTH_ERROR_MESSAGES } from '@/constants/auth';
-import ALERT_COLORS from '@/constants/notification';
+import { AUTH_ERROR_MESSAGES } from "@/constants/auth";
+import ALERT_COLORS from "@/constants/notification";
 
-import ROUTES from '@/constants/routes';
+import ROUTES from "@/constants/routes";
 
-import styles from './styles';
+import styles from "./styles";
 
-import sharedStyles from '@/styles/shared/sharedStyles';
+import sharedStyles from "@/styles/shared/sharedStyles";
 
-import { AuthContext } from '@/providers/GlobalProvider';
+import { AuthContext } from "@/providers/GlobalProvider";
 
-import { setLoading } from '@/redux/slices/authSlice';
-import { auth } from '@/redux/store';
+import { setLoading } from "@/redux/slices/authSlice";
+import { auth } from "@/redux/store";
 
-import AUTH_REGEX from '@/regex/auth';
+import AUTH_REGEX from "@/regex/auth";
 
 const DEFAULT_FORM_VALUES = {
-  email: '',
-  password: '',
+  email: "",
+  password: "",
 };
 
 const DEFAULT_ERR_STATE = {
@@ -63,8 +63,8 @@ const SignInForm = (props) => {
       // Check for required fields
       if (!email && !password) {
         setError({
-          email: { message: 'Email address is required' },
-          password: { message: 'Password is required' },
+          email: { message: "Email address is required" },
+          password: { message: "Password is required" },
         });
         return;
       }
@@ -77,7 +77,7 @@ const SignInForm = (props) => {
 
       // Check if password is entered
       if (!password) {
-        setError({ password: { message: 'Password is required' } });
+        setError({ password: { message: "Password is required" } });
         return;
       }
 
@@ -90,7 +90,7 @@ const SignInForm = (props) => {
         signOut(auth);
         handleOpenSnackBar(
           ALERT_COLORS.INFO,
-          'Please check your inbox to verify your email'
+          "Please check your inbox to verify your email"
         );
         return;
       }
@@ -146,7 +146,7 @@ const SignInForm = (props) => {
       <GradientOutlinedButton
         bgcolor={theme.palette.Dark_Colors.Dark[1]}
         text="Sign In"
-        textColor={theme.palette.Common.White['100p']}
+        textColor={theme.palette.Common.White["100p"]}
         loading={signInLoading}
         {...styles.submitButtonProps}
       />

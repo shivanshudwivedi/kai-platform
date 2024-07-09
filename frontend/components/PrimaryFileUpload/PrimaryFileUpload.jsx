@@ -1,11 +1,11 @@
-import { forwardRef, useRef, useState } from 'react';
+import { forwardRef, useRef, useState } from "react";
 
-import { FileUploadOutlined } from '@mui/icons-material';
-import { Chip, Grid, IconButton, Typography } from '@mui/material';
+import { FileUploadOutlined } from "@mui/icons-material";
+import { Chip, Grid, IconButton, Typography } from "@mui/material";
 
-import { MultiSelectElement } from 'react-hook-form-mui';
+import { MultiSelectElement } from "react-hook-form-mui";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Generates a reusable input text field component with a required title and an optional description.
@@ -110,11 +110,11 @@ const PrimaryFileUpload = forwardRef((props, ref) => {
       <IconButton
         onClick={handleCarouselInput}
         sx={{
-          ':hover': { bgcolor: (theme) => theme.palette.Common.Black['30p'] },
+          ":hover": { bgcolor: (theme) => theme.palette.Common.Black["30p"] },
         }}
       >
         <FileUploadOutlined
-          sx={{ color: (theme) => theme.palette.Common.Black['100p'] }}
+          sx={{ color: (theme) => theme.palette.Common.Black["100p"] }}
         />
       </IconButton>
     );
@@ -152,7 +152,7 @@ const PrimaryFileUpload = forwardRef((props, ref) => {
       <input
         type="file"
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleCarouselFiles}
         multiple={multiple}
       />

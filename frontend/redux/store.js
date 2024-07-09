@@ -1,9 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
-
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 import authReducer from './slices/authSlice';
 import chatReducer from './slices/chatSlice';
@@ -18,21 +19,38 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 const functions = getFunctions(app);
 
-// Connect to Firebase Emulators if running locally
 if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectFirestoreEmulator(firestore, 'localhost', 8080);
   connectFunctionsEmulator(functions, 'localhost', 5001);
 }
 
-const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    user: userReducer,
-    tools: toolsReducer,
-    chat: chatReducer,
-  },
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['auth', 'user'], // Add any other reducers you want to persist
+};
+
+const rootReducer = combineReducers({
+  auth: authReducer,
+  user: userReducer,
+  tools: toolsReducer,
+  chat: chatReducer,
 });
 
-export { auth, firestore, functions };
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST'],
+      },
+    }),
+});
+
+const persistor = persistStore(store);
+
+export { auth, firestore, functions, persistor };
 export default store;

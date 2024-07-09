@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { Fade, Grid } from '@mui/material';
+import { Fade, Grid } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 const ImageMessage = (props) => {
   const { link } = props;
@@ -15,8 +15,8 @@ const ImageMessage = (props) => {
             width="100%"
             height="100%"
             style={{
-              objectFit: 'contain',
-              borderRadius: '18px',
+              objectFit: "contain",
+              borderRadius: "18px",
             }}
           />
         </Grid>

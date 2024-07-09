@@ -1,14 +1,14 @@
-import { useTheme } from '@emotion/react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { duotoneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTheme } from "@emotion/react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-import styles from './styles';
+import styles from "./styles";
 
 const CodeComponent = (props) => {
   const { children, className, node, ...rest } = props;
   const theme = useTheme();
 
-  const languageMatch = /language-(\w+)/.exec(className || '');
+  const languageMatch = /language-(\w+)/.exec(className || "");
 
   if (languageMatch) {
     const language = languageMatch[1];
@@ -19,7 +19,7 @@ const CodeComponent = (props) => {
         language={language}
         style={duotoneDark}
       >
-        {String(children).replace(/\n$/, '')}
+        {String(children).replace(/\n$/, "")}
       </SyntaxHighlighter>
     );
   }

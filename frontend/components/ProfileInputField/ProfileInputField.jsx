@@ -1,8 +1,8 @@
-import { forwardRef } from 'react';
+import { forwardRef } from "react";
 
-import { TextFieldElement } from 'react-hook-form-mui';
+import { TextFieldElement } from "react-hook-form-mui";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Generates a profile input field component.
@@ -40,7 +40,7 @@ const ProfileInputField = forwardRef((props, ref) => {
     InputLabelProps: styles.inputLabelProps(error),
     fullWidth: true,
     label: helperText || label,
-    autoComplete: 'off',
+    autoComplete: "off",
     placeholder: placeholderText,
     FormHelperTextProps: { error },
     sx: style,

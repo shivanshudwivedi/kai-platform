@@ -1,6 +1,6 @@
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
-import { VALIDATION_STATES } from '@/constants/auth';
+import { VALIDATION_STATES } from "@/constants/auth";
 
 const { SUCCESS, ERROR, DEFAULT } = VALIDATION_STATES;
 
@@ -19,12 +19,12 @@ const useWatchFields = (fieldConfigs) => {
   const newFieldStates = {};
 
   fieldConfigs.forEach(({ fieldName, regexPattern }) => {
-    const fieldValue = watch(fieldName, '');
+    const fieldValue = watch(fieldName, "");
 
     const isValidField = regexPattern.test(fieldValue);
 
     const setFieldStatus = () => {
-      if (fieldValue === '') return DEFAULT;
+      if (fieldValue === "") return DEFAULT;
       if (isValidField) return SUCCESS;
       return ERROR;
     };

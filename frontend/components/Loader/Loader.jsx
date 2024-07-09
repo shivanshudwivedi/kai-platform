@@ -1,6 +1,6 @@
-import { CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Returns a React component that renders a loader with a circular progress bar.

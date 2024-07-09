@@ -1,14 +1,14 @@
-import { Grid, Link, Typography, useTheme } from '@mui/material';
+import { Grid, Link, Typography, useTheme } from "@mui/material";
 
-import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import GradientOutlinedButton from "@/components/GradientOutlinedButton";
 
-import CartoonLetter from '@/assets/svg/CartoonLetter.svg';
+import CartoonLetter from "@/assets/svg/CartoonLetter.svg";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { auth } from '@/redux/store';
+import { auth } from "@/redux/store";
 
-import { sendPasswordReset } from '@/services/user/manageUser';
+import { sendPasswordReset } from "@/services/user/manageUser";
 
 const CheckInbox = (props) => {
   const { goBack, enteredEmail } = props;
@@ -87,7 +87,7 @@ const CheckInbox = (props) => {
     return (
       <Grid {...styles.contentHelpGridProps}>
         <Typography>
-          Having trouble logging in?{' '}
+          Having trouble logging in?{" "}
           <Link {...styles.linkProps}>Contact Help Center</Link>
         </Typography>
       </Grid>

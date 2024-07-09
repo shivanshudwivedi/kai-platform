@@ -1,8 +1,8 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography } from "@mui/material";
 
-import ToolsListingContainer from '@/components/ToolsListingContainer';
+import ToolsListingContainer from "@/components/ToolsListingContainer";
 
-import styles from './styles';
+import styles from "./styles";
 
 const HomePage = (props) => {
   const { data, loading } = props;
@@ -11,11 +11,11 @@ const HomePage = (props) => {
     return (
       <Grid {...styles.titleGridProps}>
         <Typography {...styles.titleProps}>
-          Welcome to{' '}
+          Welcome to{" "}
           <Typography {...styles.highlightTextProps}>Kai Tools</Typography> 👋
         </Typography>
         <Typography {...styles.subtitleProps}>
-          Made for{' '}
+          Made for{" "}
           <Typography {...styles.highlightTextProps}>educators</Typography>
         </Typography>
       </Grid>

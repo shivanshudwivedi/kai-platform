@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Fade, Grid, Skeleton } from '@mui/material';
+import { Fade, Grid, Skeleton } from "@mui/material";
 
-import PlayIcon from '@/assets/svg/PlayIcon.svg';
+import PlayIcon from "@/assets/svg/PlayIcon.svg";
 
-import styles from './styles';
+import styles from "./styles";
 
 const VideoMessage = (props) => {
   const { link } = props;
@@ -28,11 +28,11 @@ const VideoMessage = (props) => {
         <Grid {...styles.messageWrapperProps(false, loading)}>
           <iframe
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
+              width: "100%",
+              height: "100%",
             }}
             title="video"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -1,12 +1,12 @@
-import { Card, Grid, Typography } from '@mui/material';
+import { Card, Grid, Typography } from "@mui/material";
 
-import Image from 'next/image';
+import Image from "next/image";
 
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
-import ToolImage from '@/assets/images/BookImage.png';
+import ToolImage from "@/assets/images/BookImage.png";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Returns a Tool Card component with an image and a chip displaying the amount of coins.

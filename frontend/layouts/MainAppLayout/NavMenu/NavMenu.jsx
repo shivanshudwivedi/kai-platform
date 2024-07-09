@@ -1,27 +1,27 @@
-import { Grid, MenuItem } from '@mui/material';
-import { useRouter } from 'next/router';
+import { Grid, MenuItem } from "@mui/material";
+import { useRouter } from "next/router";
 
-import Briefcase from '@/assets/svg/Briefcase.svg';
-import ChatBubble from '@/assets/svg/ChatBubble.svg';
+import Briefcase from "@/assets/svg/Briefcase.svg";
+import ChatBubble from "@/assets/svg/ChatBubble.svg";
 
-import ROUTES from '@/constants/routes';
+import ROUTES from "@/constants/routes";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { chatRegex, homeRegex } from '@/regex/routes';
+import { chatRegex, homeRegex } from "@/regex/routes";
 
 const PAGES = [
   {
-    name: 'Kai Tools',
+    name: "Kai Tools",
     link: ROUTES.HOME,
     icon: <Briefcase />,
-    id: 'page_1',
+    id: "page_1",
   },
   {
-    name: 'Kai Chat',
+    name: "Kai Chat",
     link: ROUTES.CHAT,
     icon: <ChatBubble />,
-    id: 'page_2',
+    id: "page_2",
   },
 ];
 
@@ -37,7 +37,7 @@ const NavMenu = () => {
   const setActive = (id) => {
     const isNotHomePage = [chatRegex.test(pathname)].includes(true);
 
-    if (id === 'page_1')
+    if (id === "page_1")
       return isNotHomePage ? false : homeRegex.test(pathname);
 
     return chatRegex.test(pathname);

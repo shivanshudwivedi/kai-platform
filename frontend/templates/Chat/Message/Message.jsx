@@ -1,15 +1,15 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from "react";
 
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
-import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
+import { MESSAGE_ROLE, MESSAGE_TYPES } from "@/constants/bots";
 
-import ImageMessage from '../ImageMessage';
-import Options from '../Options';
-import TextMessage from '../TextMessage';
-import VideoMessage from '../VideoMessage';
+import ImageMessage from "../ImageMessage";
+import Options from "../Options";
+import TextMessage from "../TextMessage";
+import VideoMessage from "../VideoMessage";
 
-import { setStreaming, setStreamingDone } from '@/redux/slices/chatSlice';
+import { setStreaming, setStreamingDone } from "@/redux/slices/chatSlice";
 
 const { OPTIONS, VIDEO, TEXT, IMAGE, GIF, QUICK_REPLY } = MESSAGE_TYPES;
 
@@ -42,7 +42,7 @@ const Message = forwardRef((props, ref) => {
   const isVideo = type === VIDEO;
   const isImage = [IMAGE, GIF].includes(type);
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [messageMounted, setMessageMounted] = useState(
     isMyMessage || !isLastMessage
   );
@@ -53,7 +53,7 @@ const Message = forwardRef((props, ref) => {
   useEffect(() => {
     if (stopStreaming) return;
 
-    const characters = payload?.text.split('');
+    const characters = payload?.text.split("");
 
     characters.forEach((chunk, index) => {
       setTimeout(() => {
@@ -71,7 +71,7 @@ const Message = forwardRef((props, ref) => {
   useEffect(() => {
     if (fullyScrolled)
       ref.current?.scrollTo(0, ref.current?.scrollHeight, {
-        behavior: 'smooth',
+        behavior: "smooth",
       });
   }, [message]);
 

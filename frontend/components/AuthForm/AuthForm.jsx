@@ -1,8 +1,8 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography } from "@mui/material";
 
-import Link from 'next/link.js';
+import Link from "next/link.js";
 
-import styles from './styles.js';
+import styles from "./styles.js";
 
 /**
  * Renders an authentication form with options for local authentication and third-party authentication services.

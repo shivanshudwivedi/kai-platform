@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import AuthForm from '@/components/AuthForm';
-import AuthLayout from '@/layouts/AuthLayout';
+import AuthForm from "@/components/AuthForm";
+import AuthLayout from "@/layouts/AuthLayout";
 
-import ForgotPasswordPage from '@/templates/SignIn/ForgotPasswordPage';
-import SignInForm from '@/templates/SignIn/SignInForm';
+import ForgotPasswordPage from "@/templates/SignIn/ForgotPasswordPage";
+import SignInForm from "@/templates/SignIn/SignInForm";
 
-import ROUTES from '@/constants/routes';
+import ROUTES from "@/constants/routes";
 
 const TITLE_CONFIG = {
-  main: 'Sign in 🚀',
-  subtitle: 'Don\u0027t have an account?',
-  linklabel: 'Create Account',
+  main: "Sign in 🚀",
+  subtitle: "Don\u0027t have an account?",
+  linklabel: "Create Account",
   route: ROUTES.SIGNUP,
 };
 

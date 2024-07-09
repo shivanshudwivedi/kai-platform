@@ -1,23 +1,23 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { ArrowBack } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { ArrowBack } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 
-import AuthForm from '@/components/AuthForm';
-import AuthLayout from '@/layouts/AuthLayout';
+import AuthForm from "@/components/AuthForm";
+import AuthLayout from "@/layouts/AuthLayout";
 
-import SignUpForm from '@/templates/SignUp/SignUpForm';
-import VerifyEmailPage from '@/templates/SignUp/VerifyEmailPage';
+import SignUpForm from "@/templates/SignUp/SignUpForm";
+import VerifyEmailPage from "@/templates/SignUp/VerifyEmailPage";
 
-import { AUTH_STEPS } from '@/constants/auth';
-import ROUTES from '@/constants/routes';
+import { AUTH_STEPS } from "@/constants/auth";
+import ROUTES from "@/constants/routes";
 
-import sharedStyles from '@/styles/shared/sharedStyles';
+import sharedStyles from "@/styles/shared/sharedStyles";
 
 const TITLE_CONFIG = {
-  main: 'sign up 🌟',
-  subtitle: 'Already have an account?',
-  linklabel: 'Sign in',
+  main: "sign up 🌟",
+  subtitle: "Already have an account?",
+  linklabel: "Sign in",
   route: ROUTES.SIGNIN,
 };
 
@@ -30,7 +30,7 @@ const TITLE_CONFIG = {
 const SignUp = () => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [authStep, setAuthStep] = useState(AUTH_STEPS.EMAIL);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const handleSwitchScreen = () => {
     setIsSignUp((prev) => !prev);

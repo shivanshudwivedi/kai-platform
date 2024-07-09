@@ -1,6 +1,6 @@
-import { CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid } from "@mui/material";
 
-import styles from './styles';
+import styles from "./styles";
 
 /**
  * Renders a secondary loader component.

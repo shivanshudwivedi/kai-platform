@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { ArrowBack } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { ArrowBack } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 
-import { FORGOT_PASSWORD_STEPS } from '@/constants/auth';
+import { FORGOT_PASSWORD_STEPS } from "@/constants/auth";
 
-import CheckInbox from './CheckInbox';
-import EnterEmailView from './EnterEmailView';
+import CheckInbox from "./CheckInbox";
+import EnterEmailView from "./EnterEmailView";
 
-import sharedStyles from '@/styles/shared/sharedStyles';
+import sharedStyles from "@/styles/shared/sharedStyles";
 
 const FORGOT_PASSWORD_PAGE = {
   [FORGOT_PASSWORD_STEPS.EMAIL]: EnterEmailView,
