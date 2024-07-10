@@ -32,4 +32,4 @@ jobs:
 
     - name: Build frontend
       working-directory: ./frontend
-      run: npx next build
+      run: npm run build
