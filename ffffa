@@ -1,0 +1,240 @@
+[33mcommit 5c2097a5533105f65e59a95ba2221fbd7d119928[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchathistory[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: ff45744 4ff622c
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu Jun 6 20:12:48 2024 +0300
+
+    Merge pull request #47 from radicalxdev/fix/tool
+    
+    Fix/tool
+
+[33mcommit ff45744dcc807ea2c4d4412a63d7cbc5ec4feb44[m
+Merge: 68d707c 4f5da5c
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu Jun 6 20:11:13 2024 +0300
+
+    Merge pull request #49 from radicalxdev/fix/emulator-config
+    
+    changed client id
+
+[33mcommit 4f5da5ca05fb74981546b594f1aca80f46c39fde[m[33m ([m[1;31morigin/fix/emulator-config[m[33m)[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Tue Jun 4 18:03:19 2024 +0300
+
+    changed client id
+
+[33mcommit 4ff622c1bbe7e92b08ede7a953b31097057f298c[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Mon Jun 3 20:02:50 2024 +0300
+
+    removed cache
+
+[33mcommit c7d271daaee118d2da89c90614a8ec25c28b6a2a[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Mon Jun 3 19:51:20 2024 +0300
+
+    fixed url referencing issue
+
+[33mcommit fe8661710686c1f6e9ecdb9630503df139ccb8c5[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu May 30 01:04:50 2024 +0300
+
+    changed to trailing slash
+
+[33mcommit 68d707c6bb5f6d3a402a1f2c1b5df4830f1a6ef2[m
+Merge: bec24eb 5b03c0e
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 29 21:37:09 2024 +0300
+
+    Merge pull request #46 from radicalxdev/develop
+    
+    [PROD_DEPLOYMENT]
+
+[33mcommit 5b03c0eb5f218b16ded3034065949c059e97a462[m[33m ([m[1;31morigin/develop[m[33m)[m
+Merge: 1b4036c 224da3a
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 29 21:33:54 2024 +0300
+
+    Merge pull request #42 from radicalxdev/update/tool-communicator
+    
+    update: Update tool communicator version
+
+[33mcommit 1b4036c69f951a5ad6bb78d588736211ea35aff2[m
+Merge: df8132a bec24eb
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 29 21:33:20 2024 +0300
+
+    Merge pull request #45 from radicalxdev/main
+    
+    [SYNC]
+
+[33mcommit bec24eb758d241218e5231917689e6546917f187[m
+Merge: 650f993 751d663
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 29 21:31:31 2024 +0300
+
+    Merge pull request #43 from radicalxdev/fix/tool-page
+    
+    set rewrite for tool page
+
+[33mcommit 650f993cc682ff14837d74656f7a13e7ebeae97c[m
+Merge: 26441cc b1ec348
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 29 21:30:45 2024 +0300
+
+    Merge pull request #44 from radicalxdev/update/auth-avatar
+    
+    updated auth avatar
+
+[33mcommit b1ec348ed3b5c5223fffbce15df4f843e6be8961[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu May 23 19:08:49 2024 +0300
+
+    updated auth avatar
+
+[33mcommit 751d6637faee717493c7b4957ee7acb5adefa0c2[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu May 23 16:26:33 2024 +0300
+
+    centered 404 page UI
+
+[33mcommit 070285def4f2975d927ff9c64d025ee148e9baba[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu May 23 16:14:57 2024 +0300
+
+    set rewrite for tool page
+
+[33mcommit 224da3a0d00f81fe989e1e9ad0120b43040f56cb[m[33m ([m[1;31morigin/update/tool-communicator[m[33m)[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Thu May 23 14:36:54 2024 +0300
+
+    update: Update tool communicator version
+    
+            - udpated tool communicator onRequest function version from 1 to
+              2
+            - changed the seed_data document ids to a string from a number.
+            - added an eslintignore file to improve eslint performance by
+              ignored build directories and node modules.
+
+[33mcommit 26441ccc958c3d814239c95a41d2bd6c66febb1b[m[33m ([m[1;31morigin/feature/kai-redesign[m[33m)[m
+Merge: c92e5a7 df8132a
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 22 17:18:54 2024 +0300
+
+    Merge pull request #41 from radicalxdev/develop
+    
+    [PRODUCTION_DEPLOYMENT]
+
+[33mcommit df8132ac7e53ae49788528659a9fc85810f53d3a[m
+Merge: ca396d6 f96d916
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 22 17:16:22 2024 +0300
+
+    Merge pull request #40 from radicalxdev/add/tooltip
+    
+    Add/tooltip
+
+[33mcommit f96d916f9363ae9bb64a58ec0116151a9cea2524[m[33m ([m[1;31morigin/add/tooltip[m[33m)[m
+Merge: bff6e38 ca396d6
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 22 16:53:07 2024 +0300
+
+    Merge branch 'develop' into add/tooltip
+
+[33mcommit ca396d6480d4d2f014819e1b4c710b927b65553c[m
+Merge: 229e1de 4708fbd
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 22 16:52:11 2024 +0300
+
+    Merge pull request #39 from radicalxdev/add/PR-template
+    
+    added pull request template
+
+[33mcommit 4708fbd870e7f83222468051324727fb5c6e3511[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 22 16:48:39 2024 +0300
+
+    added pull request template
+
+[33mcommit bff6e38ccedd2f7069832ed22c950217fd76ae28[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Wed May 22 16:39:32 2024 +0300
+
+    fix: Fix error handling on tool page
+    
+            - modified submitPrompt service to surface error message from
+              backend function.
+            - modified PrimaryTextField input component and added a tooltip
+              to grant the user more info
+            - modified seed_data.json obj to add the tooltip field in the
+              input obj for Youtube Video URL.
+
+[33mcommit 229e1de4e50dfde569aa0d525c0eec98337983b5[m
+Merge: 0da8f03 c92e5a7
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Tue May 21 15:21:59 2024 +0300
+
+    Merge pull request #38 from radicalxdev/main
+    
+    [SYNC]
+
+[33mcommit c92e5a7dc0c93ccbefd1f7d64875d8b5306242c1[m
+Merge: 2606d3d 728cc0e
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Tue May 21 15:16:31 2024 +0300
+
+    Merge pull request #37 from radicalxdev/fix/eslint
+    
+    Fix/eslint
+
+[33mcommit 728cc0e0dc7d11d68a12a8442461ee93d65fd0c9[m[33m ([m[1;31morigin/fix/eslint[m[33m)[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Tue May 21 15:09:40 2024 +0300
+
+    added emulator script and running frontend dev server
+
+[33mcommit bddcd8057c4537085c720120f1cf6047158c5aa1[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Tue May 21 15:03:55 2024 +0300
+
+    added storage emulator
+
+[33mcommit a62f74af13db8adb2ff4fe4d808d7094176e5ec2[m
+Author: Billy K. Bett <82142770+bkb-Git@users.noreply.github.com>
+Date:   Tue May 21 14:54:28 2024 +0300
+
+    fixed eslint issue & formatted code
+
+[33mcommit 2606d3d19fd5e46fa7fbf35da8bbcae55c829183[m
+Merge: 2bd2da1 f24d9f8
+Author: Yunus Jamal <yunusj@atompoint.com>
+Date:   Tue May 21 03:44:22 2024 +0500
+
+    Merge pull request #36 from radicalxdev/sample-env
+    
+    Sample env file added
+
+[33mcommit f24d9f8e2051a1dcda64bdfa6e08dc7aa4cf3f3f[m[33m ([m[1;31morigin/sample-env[m[33m)[m
+Author: Yunus Jamal <yunusj@atompoint.com>
+Date:   Tue May 21 03:44:01 2024 +0500
+
+    Sample env file added
+
+[33mcommit 2bd2da1f96c82b01251287444c761c4d164cc150[m
+Merge: a85b6ea 0da8f03
+Author: Yunus Jamal <yunusj@atompoint.com>
+Date:   Tue May 21 03:28:00 2024 +0500
+
+    Merge pull request #35 from radicalxdev/develop
+    
+    Release with instructions on how to contribute
+
+[33mcommit 0da8f03f20a13cae047ec9a87809bfa679e994de[m
+Merge: a85b6ea 562a083
+Author: Yunus Jamal <yunusj@atompoint.com>
+Date:   Tue May 21 03:27:09 2024 +0500
+
+    Merge pull request #34 from radicalxdev/update/code-of-conduct
+    
+    Update/code of conduct
+
+[33mcommit 562a083a8bda39f1301b17fa43ddabbe57238fe3[m[33m ([m[1;31mor

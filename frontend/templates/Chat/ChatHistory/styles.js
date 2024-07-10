@@ -1,0 +1,80 @@
+export const styles = {
+  mainContainer: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    backgroundColor: "white",
+    maxWidth: "250px",
+  },
+  sidebarContainer: {
+    backgroundColor: "#1F2022",
+    height: "90%",
+    width: "250px",
+    marginRight: "10px",
+    boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: "30px",
+    border: "3px solid #B791FF95",
+    padding: "0", // Ensure no padding
+  },
+  chatSession: {
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "10px",
+    width: "100%",
+  },
+  chatSessionHover: {
+    backgroundColor: "black",
+    color: "purple",
+  },
+  chatSessionText: {
+    display: "flex",
+    color: "white",
+  },
+  chatTimeText: {
+    display: "flex",
+    justifyContent: "flex-end",
+    color: "#B791FF95",
+  },
+  h2: {
+    color: "white",
+    marginLeft: "10px",
+    fontSize: "20px",
+  },
+  h2Container: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "60px",
+    backgroundColor: "black",
+    marginBottom: "40px",
+    borderTopLeftRadius: "30px", // Rounded top left corner
+    borderTopRightRadius: "30px", // Rounded top right corner
+  },
+  mainContainerHover: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    backgroundColor: "white",
+    height: "100%",
+  },
+  h2ContainerHover: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "55px",
+    backgroundColor: "black",
+    borderRadius: "30px",
+    marginBottom: "30%",
+    marginRight: "10px",
+    boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+    border: "3px solid #B791FF95",
+  },
+};
