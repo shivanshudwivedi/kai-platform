@@ -1,20 +1,17 @@
 import { useEffect } from 'react';
 import { Grid, useMediaQuery } from '@mui/material';
-import Head from 'next/head';
-import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router'; // Import useRouter
-
+import { useDispatch, useSelector } from 'react-redux';
+import { httpsCallable } from 'firebase/functions';
 import AppDisabled from '@/components/AppDisabled';
 import Loader from '@/components/Loader';
+import ChatHistory from '@/templates/Chat/ChatHistory';
 import SideMenu from './SideMenu';
 import styles from './styles';
-
 import { setLoading } from '@/redux/slices/authSlice';
-import ChatHistory from '@/templates/Chat/ChatHistory';
-import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import { setAllSessions } from '@/redux/slices/chatSlice';
-import { firestore } from '@/redux/store';
-import { all } from 'axios';
+import { functions } from '@/redux/store'; 
+import Head from 'next/head';
 
 /**
  * Renders the main application layout.
@@ -30,9 +27,7 @@ const MainAppLayout = (props) => {
   const dispatch = useDispatch();
   const router = useRouter(); // Initialize useRouter
 
-  const chat = useSelector((state) => state.chat);
-
-  const { sessions, allSessions } = useSelector((state) => state.chat);
+  const { allSessions } = useSelector((state) => state.chat);
 
   const auth = useSelector((state) => state.auth);
   const user = useSelector((state) => state.user);
@@ -47,19 +42,17 @@ const MainAppLayout = (props) => {
   useEffect(() => {
     if (!userData?.id) return;
 
-    const sessionsRef = collection(firestore, 'chatSessions');
-    const q = query(sessionsRef, where('user.id', '==', userData.id));
+    const fetchChatHistory = httpsCallable(functions, 'fetchChatHistory');
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const sessionsData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      dispatch(setAllSessions(sessionsData));
-    }, (error) => {
-      console.error('Error fetching user sessions:', error);
-    });
-
-    // Clean up the subscription when the component unmounts
-    return () => unsubscribe();
-  }, [dispatch, firestore, userData?.id]);
+    fetchChatHistory({ userId: userData.id })
+      .then((result) => {
+        const { data } = result.data;
+        dispatch(setAllSessions(data));
+      })
+      .catch((error) => {
+        console.error('Error fetching user sessions:', error);
+      });
+  }, [dispatch, userData?.id]);
 
   useEffect(() => {
     dispatch(setLoading(false));

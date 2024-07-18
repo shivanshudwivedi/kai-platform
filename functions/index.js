@@ -23,6 +23,10 @@ module.exports = {
   tool: kaiAIController.tool,
   createChatSession: kaiAIController.createChatSession,
 
+  /* Chat History & Reopen Chat Functionality Implemented */
+  fetchChatHistory: kaiAIController.fetchChatHistory,
+  reopenChatSession: kaiAIController.reopenChatSession,
+
   /* Migration Scripts - For running  */
   ...migrationScripts,
 };

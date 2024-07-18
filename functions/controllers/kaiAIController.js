@@ -362,8 +362,159 @@ const createChatSession = onCall(async (props) => {
   }
 });
 
+/**
+ * Fetches the chat history for a specific user from Firestore.
+ *
+ * This function retrieves chat documents for a given userId from the 'chatSessions' collection in Firestore.
+ * It handles potential index issues and falls back to an unordered query if necessary.
+ *
+ * @function fetchChatHistory
+ * @param {object} request - The request object containing the data.
+ * @param {object} request.data - The input data containing the userId.
+ * @param {string} request.data.userId - The unique identifier of the user whose chat history is to be fetched.
+ * @throws {HttpsError} If the userId is not provided or if there is an internal error during Firestore query execution.
+ * 
+ * @returns {object} An object containing the status of the request and the chat history data.
+ * @returns {string} returns.status - The status of the request ('success' if successful).
+ * @returns {Array} returns.data - An array of chat history objects, each containing an id and chat data.
+ */
+const fetchChatHistory = onCall(async (request) => {
+  logger.info('fetchChatHistory function called', { structuredData: true });
+
+  try {
+    const userId = request.data?.userId;
+    logger.info('Received userId:', userId);
+
+    if (!userId) {
+      logger.error('Missing userId in request');
+      throw new HttpsError('invalid-argument', 'Missing userId');
+    }
+
+    let chatHistoryQuery = admin
+      .firestore()
+      .collection('chatSessions')
+      .where('user.id', '==', userId)
+      .orderBy('updatedAt', 'desc');
+
+    let chatHistorySnapshot;
+    try {
+      chatHistorySnapshot = await chatHistoryQuery.get();
+    } catch (queryError) {
+      if (queryError.code === 9) { // FAILED_PRECONDITION, likely due to missing index
+        logger.warn('Index not found, falling back to unordered query');
+        // Fallback to a simpler query without ordering
+        chatHistoryQuery = admin
+          .firestore()
+          .collection('chatSessions')
+          .where('user.id', '==', userId);
+        chatHistorySnapshot = await chatHistoryQuery.get();
+      } else {
+        throw queryError; // Re-throw if it's not an index issue
+      }
+    }
+
+    logger.info(`Found ${chatHistorySnapshot.size} chat sessions for userId: ${userId}`);
+
+    if (chatHistorySnapshot.empty) {
+      logger.info('No chat history found for the user');
+      return { status: 'success', data: [] };
+    }
+
+    const chatHistory = chatHistorySnapshot.docs.map(doc => {
+      const data = doc.data();
+      const lastMessage = data.messages && data.messages.length > 0 
+        ? data.messages[data.messages.length - 1] 
+        : null;
+      
+      return {
+        id: doc.id,
+        lastMessage: lastMessage ? lastMessage.content : 'No messages', 
+        messages: data.messages,
+        timestamp: data.updatedAt ? data.updatedAt.toDate().toISOString() : null,
+        user: data.user || {},
+        messageCount: data.messages ? data.messages.length : 0,
+        type: data.type || 'chat'
+      };
+    });
+
+    logger.info('Successfully fetched and processed chat history');
+    return { status: 'success', data: chatHistory };
+
+  } catch (error) {
+    logger.error('Error in fetchChatHistory:', error);
+
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+
+    throw new HttpsError('internal', 'An unexpected error occurred while fetching chat history');
+  }
+});
+
+/**
+ * Reopens a chat session by fetching its data from Firestore.
+ *
+ * @param {Object} request - The request object containing the data.
+ * @param {Object} request.data - The data object containing the chatId.
+ * @param {string} request.data.chatId - The ID of the chat session to reopen.
+ *
+ * @returns {Object} - An object containing the status and chat session data.
+ *
+ * @throws {HttpsError} - Throws an error if chatId is missing, if the chat session is not found, or if an internal error occurs.
+ */
+
+
+
+const reopenChatSession = onCall(async (request) => {
+  logger.info('reopenChatSession function called', { structuredData: true });
+
+  try {
+    const chatId = request.data?.chatId;
+    logger.info('Received chatId:', chatId);
+
+    if (!chatId) {
+      logger.error('Missing chatId in request');
+      throw new HttpsError('invalid-argument', 'Missing chatId');
+    }
+
+    const chatSessionRef = admin.firestore().collection('chatSessions').doc(chatId);
+    const chatSession = await chatSessionRef.get();
+
+    if (!chatSession.exists) {
+      logger.error(`Chat session not found: ${chatId}`);
+      throw new HttpsError('not-found', 'Chat session not found');
+    }
+
+    const chatData = chatSession.data();
+    logger.info(`Successfully reopened chat session: ${chatId}`);
+
+    return { 
+      status: 'success', 
+      data: {
+        id: chatSession.id,
+        ...chatData,
+        messages: chatData.messages.map(msg => ({
+          ...msg,
+          timestamp: msg.timestamp.toDate().toISOString()
+        }))
+      }
+    };
+  } catch (error) {
+    logger.error('Error reopening chat session:', error);
+
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+
+    throw new HttpsError('internal', 'An unexpected error occurred while reopening the chat session');
+  }
+});
+
+
 module.exports = {
   chat,
   tool: https.onRequest(app),
   createChatSession,
+  fetchChatHistory,
+  reopenChatSession,
 };

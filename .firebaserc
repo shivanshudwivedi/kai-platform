@@ -1,12 +1,12 @@
 {
   "projects": {
-    "default": "kai-project-2d905"
+    "default": "kai-test-18d0e"
   },
   "targets": {
     "kai-project-2d905": {
       "hosting": {
         "next": [
-          "kai-project-2d905"
+          "kai-test-18d0e"
         ]
       }
     }
