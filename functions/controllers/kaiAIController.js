@@ -9,6 +9,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const busboy = require('busboy');
 const app = express();
+const { getAuth } = require('firebase-admin/auth');
 
 const DEBUG = process.env.DEBUG;
 /**
@@ -266,28 +267,50 @@ app.post('/api/tool/', (req, res) => {
 });
 
 /**
- * This creates a chat session for a user.
- * If the chat session already exists, it will return the existing chat session.
- * Otherwise, it will create a new chat session and send the first message.
+ * Creates a new chat session for an authenticated user.
+ * If the chat session creation is successful, it sends the first message to the AI and stores the response.
  *
- * @param {Object} props - The properties passed to the function.
- * @param {Object} props.data - The data object containing the user, challenge, message, and botType.
- * @param {Object} props.data.user - The user object.
- * @param {Object} props.data.message - The message object.
- * @param {Object} props.data.type - The bot type.
+ * @param {Object} request - The request object containing the data and auth information.
+ * @param {Object} request.data - The data object containing the user, message, and type information.
+ * @param {Object} request.data.user - The user object.
+ * @param {Object} request.data.message - The initial message object.
+ * @param {string} request.data.type - The bot type.
  *
- * @return {Promise<Object>} - A promise that resolves to an object containing the status and data of the chat sessions.
- * @throws {HttpsError} Throws an error if there is an internal error.
+ * @return {Promise<Object>} - A promise that resolves to an object containing the status and data of the chat session.
+ * @throws {HttpsError} Throws an error if the user is not authenticated, if required fields are missing, or if there is an internal error.
  */
-const createChatSession = onCall(async (props) => {
+const createChatSession = onCall(async (request) => {
+  logger.info('createChatSession function called', { structuredData: true });
+
   try {
-    DEBUG && logger.log('Communicator started, data:', props.data);
+    // Check if the user is authenticated
+    if (!request.auth) {
+      logger.error('Unauthenticated access attempt');
+      throw new HttpsError('unauthenticated', 'User must be authenticated to create a chat session');
+    }
 
-    const { user, message, type } = props.data;
+    const { user, message, type } = request.data;
 
+    // Validate input
     if (!user || !message || !type) {
-      logger.log('Missing required fields', props.data);
+      logger.error('Missing required fields', request.data);
       throw new HttpsError('invalid-argument', 'Missing required fields');
+    }
+
+    if (typeof message.content !== 'string' || message.content.trim().length === 0) {
+      logger.error('Invalid message format', message);
+      throw new HttpsError('invalid-argument', 'Invalid message format');
+    }
+
+    if (!Object.values(BOT_TYPE).includes(type)) {
+      logger.error('Invalid bot type', type);
+      throw new HttpsError('invalid-argument', 'Invalid bot type');
+    }
+
+    // Ensure the user ID in the request matches the authenticated user's ID
+    if (user.id !== request.auth.uid) {
+      logger.error('User ID mismatch', { providedId: user.id, authId: request.auth.uid });
+      throw new HttpsError('permission-denied', 'User ID does not match authenticated user');
     }
 
     const initialMessage = {
@@ -295,7 +318,7 @@ const createChatSession = onCall(async (props) => {
       timestamp: Timestamp.fromMillis(Date.now()),
     };
 
-    // Create new chat session if it doesn't exist
+    // Create new chat session
     const chatSessionRef = await admin
       .firestore()
       .collection('chatSessions')
@@ -307,7 +330,9 @@ const createChatSession = onCall(async (props) => {
         updatedAt: Timestamp.fromMillis(Date.now()),
       });
 
-    // Send trigger message to ReX AI
+    logger.info(`Created new chat session with ID: ${chatSessionRef.id}`);
+
+    // Send initial message to Kai AI
     const response = await kaiCommunicator({
       data: {
         messages: [initialMessage],
@@ -316,12 +341,11 @@ const createChatSession = onCall(async (props) => {
       },
     });
 
-    DEBUG && logger.log('response: ', response?.data, 'type', typeof response);
+    logger.info('Received response from Kai AI');
 
     const { messages } = (await chatSessionRef.get()).data();
-    DEBUG && logger.log('updated messages: ', messages);
 
-    // Add response to chat session
+    // Add AI response to chat session
     const updatedResponseMessages = messages.concat(
       Array.isArray(response.data?.data)
         ? response.data?.data?.map((message) => ({
@@ -339,40 +363,41 @@ const createChatSession = onCall(async (props) => {
     await chatSessionRef.update({
       messages: updatedResponseMessages,
       id: chatSessionRef.id,
+      updatedAt: Timestamp.fromMillis(Date.now()),
     });
 
     const updatedChatSession = await chatSessionRef.get();
-    DEBUG && logger.log('Updated chat session: ', updatedChatSession.data());
-
     const createdChatSession = {
       ...updatedChatSession.data(),
       id: updatedChatSession.id,
     };
 
-    DEBUG && logger.log('Created chat session: ', createdChatSession);
-
-    logger.log('Successfully communicated');
+    logger.info('Successfully created and updated chat session');
     return {
       status: 'created',
       data: createdChatSession,
     };
   } catch (error) {
-    logger.error(error);
-    throw new HttpsError('internal', error.message);
+    logger.error('Error in createChatSession:', error);
+
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+
+    throw new HttpsError('internal', 'An unexpected error occurred while creating the chat session');
   }
 });
+
 
 /**
  * Fetches the chat history for a specific user from Firestore.
  *
- * This function retrieves chat documents for a given userId from the 'chatSessions' collection in Firestore.
+ * This function retrieves chat documents for the authenticated user from the 'chatSessions' collection in Firestore.
  * It handles potential index issues and falls back to an unordered query if necessary.
  *
  * @function fetchChatHistory
- * @param {object} request - The request object containing the data.
- * @param {object} request.data - The input data containing the userId.
- * @param {string} request.data.userId - The unique identifier of the user whose chat history is to be fetched.
- * @throws {HttpsError} If the userId is not provided or if there is an internal error during Firestore query execution.
+ * @param {object} request - The request object containing the data and auth information.
+ * @throws {HttpsError} If the user is not authenticated or if there is an internal error during Firestore query execution.
  * 
  * @returns {object} An object containing the status of the request and the chat history data.
  * @returns {string} returns.status - The status of the request ('success' if successful).
@@ -382,13 +407,14 @@ const fetchChatHistory = onCall(async (request) => {
   logger.info('fetchChatHistory function called', { structuredData: true });
 
   try {
-    const userId = request.data?.userId;
-    logger.info('Received userId:', userId);
-
-    if (!userId) {
-      logger.error('Missing userId in request');
-      throw new HttpsError('invalid-argument', 'Missing userId');
+    // Check if the user is authenticated
+    if (!request.auth) {
+      logger.error('Unauthenticated access attempt');
+      throw new HttpsError('unauthenticated', 'User must be authenticated to fetch chat history');
     }
+
+    const userId = request.auth.uid;
+    logger.info(`Fetching chat history for user: ${userId}`);
 
     let chatHistoryQuery = admin
       .firestore()
@@ -409,6 +435,7 @@ const fetchChatHistory = onCall(async (request) => {
           .where('user.id', '==', userId);
         chatHistorySnapshot = await chatHistoryQuery.get();
       } else {
+        logger.error('Error executing Firestore query:', queryError);
         throw queryError; // Re-throw if it's not an index issue
       }
     }
@@ -453,20 +480,27 @@ const fetchChatHistory = onCall(async (request) => {
 /**
  * Reopens a chat session by fetching its data from Firestore.
  *
- * @param {Object} request - The request object containing the data.
+ * @param {Object} request - The request object containing the data and auth information.
  * @param {Object} request.data - The data object containing the chatId.
  * @param {string} request.data.chatId - The ID of the chat session to reopen.
  *
  * @returns {Object} - An object containing the status and chat session data.
  *
- * @throws {HttpsError} - Throws an error if chatId is missing, if the chat session is not found, or if an internal error occurs.
+ * @throws {HttpsError} - Throws an error if user is not authenticated, chatId is missing, if the chat session is not found, or if an internal error occurs.
  */
 const reopenChatSession = onCall(async (request) => {
   logger.info('reopenChatSession function called', { structuredData: true });
 
   try {
+    // Check if the user is authenticated
+    if (!request.auth) {
+      logger.error('Unauthenticated access attempt');
+      throw new HttpsError('unauthenticated', 'User must be authenticated to reopen a chat session');
+    }
+
+    const userId = request.auth.uid;
     const chatId = request.data?.chatId;
-    logger.info('Received chatId:', chatId);
+    logger.info(`Attempting to reopen chat session ${chatId} for user ${userId}`);
 
     if (!chatId) {
       logger.error('Missing chatId in request');
@@ -482,6 +516,13 @@ const reopenChatSession = onCall(async (request) => {
     }
 
     const chatData = chatSession.data();
+
+    // Check if the chat session belongs to the authenticated user
+    if (chatData.user.id !== userId) {
+      logger.error(`User ${userId} attempted to access chat session ${chatId} belonging to user ${chatData.user.id}`);
+      throw new HttpsError('permission-denied', 'You do not have permission to access this chat session');
+    }
+
     logger.info(`Successfully reopened chat session: ${chatId}`);
 
     return { 
