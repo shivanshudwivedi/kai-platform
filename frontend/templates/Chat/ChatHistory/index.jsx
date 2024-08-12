@@ -1,15 +1,18 @@
 // ChatHistory.js
 import React, { useState } from 'react';
-import { List, ListItem, ListItemText, Button } from '@mui/material';
-import { styles } from './styles';
-import { setChatSession, setSessionLoaded, resetChat } from '@/redux/slices/chatSlice';
+
+import { Minimize, OpenInFull } from '@mui/icons-material';
+import { Button, List, ListItem, ListItemText } from '@mui/material';
+
 import { useDispatch } from 'react-redux';
+
+import { styles } from './styles';
+
 import {
-  OpenInFull,
-  Minimize
-} from '@mui/icons-material';
-
-
+  resetChat,
+  setChatSession,
+  setSessionLoaded,
+} from '@/redux/slices/chatSlice';
 
 const truncateText = (text, maxLength) => {
   if (!text) return '';
@@ -20,7 +23,8 @@ const truncateText = (text, maxLength) => {
 };
 
 const convertTimestampToDate = (timestamp) => {
-  const milliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+  const milliseconds =
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
   const date = new Date(milliseconds);
 
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -36,18 +40,21 @@ const ChatHistory = ({ history }) => {
     return <div>No chat history available.</div>;
   }
 
-const handleChatSessionClick = (id) => {
+  const handleChatSessionClick = (id) => {
     dispatch(resetChat());
     // Handle chat session click
     dispatch(setChatSession(history.find((session) => session.id === id)));
-}
+  };
   if (display) {
     return (
-      <div style = {styles.mainContainer}>
+      <div style={styles.mainContainer}>
         <List style={styles.sidebarContainer}>
-          <div style = {styles.h2Container}>
+          <div style={styles.h2Container}>
             <h2 style={styles.h2}>Chat History</h2>
-            {<Button startIcon={<Minimize />} onClick={() => setDisplay(false)}/>}
+            <Button
+              startIcon={<Minimize />}
+              onClick={() => setDisplay(false)}
+            />
           </div>
           {history.map((entry) => (
             <ListItem
@@ -61,7 +68,10 @@ const handleChatSessionClick = (id) => {
               onClick={() => handleChatSessionClick(entry.id)}
             >
               <ListItemText
-                primary={truncateText(entry.messages[0]?.payload?.text || '', 15)}
+                primary={truncateText(
+                  entry.messages[0]?.payload?.text || '',
+                  15
+                )}
                 style={styles.chatSessionText}
               />
               <ListItemText
@@ -74,16 +84,15 @@ const handleChatSessionClick = (id) => {
       </div>
     );
   }
-  else {
-    return (
-      <div style={styles.mainContainerHover}>
-          <div style = {styles.h2ContainerHover}>
-            <h2 style={styles.h2}>Chat History</h2>
-            {<Button startIcon={<OpenInFull />} onClick={() => setDisplay(true)}/> }
-          </div>
+
+  return (
+    <div style={styles.mainContainerHover}>
+      <div style={styles.h2ContainerHover}>
+        <h2 style={styles.h2}>Chat History</h2>
+        <Button startIcon={<OpenInFull />} onClick={() => setDisplay(true)} />
       </div>
-    )
-  }
+    </div>
+  );
 };
 
 export default ChatHistory;

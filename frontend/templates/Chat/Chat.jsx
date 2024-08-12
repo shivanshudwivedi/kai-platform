@@ -14,7 +14,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { collection, onSnapshot, query, where, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,16 +28,18 @@ import NavigationIcon from '@/assets/svg/Navigation.svg';
 
 import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
 
+import QuickActions from '../QuickActions';
+
 import CenterChatContentNoMessages from './CenterChatContentNoMessages';
+import ChatHistory from './ChatHistory';
 import ChatSpinner from './ChatSpinner';
 import Message from './Message';
 import styles from './styles';
-import ChatHistory from './ChatHistory';
 
 import {
-  setAllSessions,
   openInfoChat,
   resetChat,
+  setAllSessions,
   setChatSession,
   setError,
   setFullyScrolled,
@@ -159,8 +167,6 @@ const ChatInterface = () => {
     };
   }, [sessionLoaded, currentSession, sessionId, dispatch]);
 
-
-
   const handleOnScroll = () => {
     const scrolled =
       Math.abs(
@@ -217,7 +223,7 @@ const ChatInterface = () => {
     dispatch(setTyping(true));
 
     await sendMessage({ message, id: sessionId }, dispatch);
-    console.log("message sent");
+    console.log('message sent');
   };
 
   const handleQuickReply = async (option) => {
@@ -340,6 +346,10 @@ const ChatInterface = () => {
     );
   };
 
+  const renderQuickActions = () => {
+    return <QuickActions />;
+  };
+
   const renderBottomChatContent = () => {
     if (!openSettingsChat && !infoChatOpened)
       return (
@@ -366,13 +376,14 @@ const ChatInterface = () => {
     return null;
   };
 
-
   return (
     <Grid {...styles.mainGridProps}>
       {renderMoreChat()}
       {renderCenterChatContent()}
+
       {renderCenterChatContentNoMessages()}
       {renderNewMessageIndicator()}
+      {renderQuickActions()}
       {renderBottomChatContent()}
     </Grid>
   );
