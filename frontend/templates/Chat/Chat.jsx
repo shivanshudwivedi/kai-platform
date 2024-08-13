@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from 'react';
+
 import {
   ArrowDownwardOutlined,
   InfoOutlined,
   Settings,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 import {
   Button,
   Fade,
@@ -12,20 +13,33 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from "@mui/material";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { useDispatch, useSelector } from "react-redux";
-import NavigationIcon from "@/assets/svg/Navigation.svg";
-import { MESSAGE_ROLE, MESSAGE_TYPES } from "@/constants/bots";
-import CenterChatContentNoMessages from "./CenterChatContentNoMessages";
-import ChatSpinner from "./ChatSpinner";
-import Message from "./Message";
-import ChatHistory from "@../../components/ChatHistory/ChatHistory";
-import { fetchChatHistory } from "@../../components/FetchChatHistory/function";
-import styles from "./styles";
+} from '@mui/material';
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import NavigationIcon from '@/assets/svg/Navigation.svg';
+
+import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
+
+import QuickActions from '../QuickActions';
+
+import CenterChatContentNoMessages from './CenterChatContentNoMessages';
+import ChatHistory from './ChatHistory';
+import ChatSpinner from './ChatSpinner';
+import Message from './Message';
+import styles from './styles';
+
 import {
   openInfoChat,
   resetChat,
+  setAllSessions,
   setChatSession,
   setError,
   setFullyScrolled,
@@ -36,32 +50,13 @@ import {
   setStreaming,
   setStreamingDone,
   setTyping,
-} from "@/redux/slices/chatSlice";
-import { firestore } from "@/redux/store";
-import createChatSession from "@/services/chatbot/createChatSession";
-import sendMessage from "@/services/chatbot/sendMessage";
+} from '@/redux/slices/chatSlice';
+import { firestore } from '@/redux/store';
+import createChatSession from '@/services/chatbot/createChatSession';
+import sendMessage from '@/services/chatbot/sendMessage';
 
 const ChatInterface = () => {
   const messagesContainerRef = useRef();
-
-  const [showChatHistory, setShowChatHistory] = useState(false);
-  const [chatHistoryData, setChatHistoryData] = useState([]);
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const history = await fetchChatHistory(userData.id);
-        setChatHistoryData(history);
-      } catch (error) {
-        console.error("Error fetching chat history:", error);
-      }
-    };
-    fetchHistory();
-  }, [userData.id]);
-
-  const toggleChatHistory = () => {
-    setShowChatHistory(!showChatHistory);
-  };
 
   const dispatch = useDispatch();
   const {
@@ -78,24 +73,13 @@ const ChatInterface = () => {
     error,
   } = useSelector((state) => state.chat);
   const { data: userData } = useSelector((state) => state.user);
+  const { sessions, allSessions } = useSelector((state) => state.chat);
 
-  const sessionId = localStorage.getItem("sessionId");
+  const sessionId = localStorage.getItem('sessionId');
 
   const currentSession = chat;
-  const chatMessages = currentSession?.messages || chatHistoryData?.messages;
+  const chatMessages = currentSession?.messages;
   const showNewMessageIndicator = !fullyScrolled && streamingDone;
-
-  const renderChatHistory = () => {
-    if (showChatHistory) {
-      return (
-        <ChatHistory
-          history={chatHistoryData}
-          onClose={() => setShowChatHistory(false)}
-        />
-      );
-    }
-    return null;
-  };
 
   const startConversation = async (message) => {
     dispatch(
@@ -105,28 +89,32 @@ const ChatInterface = () => {
     );
     dispatch(setTyping(true));
 
+    // Define the chat payload
     const chatPayload = {
       user: {
         id: userData?.id,
         fullName: userData?.fullName,
         email: userData?.email,
       },
-      type: "chat",
+      type: 'chat',
       message,
     };
 
+    // Send a chat session
     const { status, data } = await createChatSession(chatPayload, dispatch);
 
+    // Remove typing bubble
     dispatch(setTyping(false));
-    if (status === "created") dispatch(setStreaming(true));
+    if (status === 'created') dispatch(setStreaming(true));
 
+    // Set chat session
     dispatch(setChatSession(data));
     dispatch(setSessionLoaded(true));
   };
 
   useEffect(() => {
     return () => {
-      localStorage.removeItem("sessionId");
+      localStorage.removeItem('sessionId');
       dispatch(resetChat());
     };
   }, []);
@@ -135,22 +123,26 @@ const ChatInterface = () => {
     let unsubscribe;
 
     if (sessionLoaded || currentSession) {
-      messagesContainerRef.current?.scrollTo(
-        0,
-        messagesContainerRef.current?.scrollHeight,
-        {
-          behavior: "smooth",
-        }
-      );
+      const scrollMessages = () => {
+        messagesContainerRef.current?.scrollTo(
+          0,
+          messagesContainerRef.current?.scrollHeight,
+          {
+            behavior: 'smooth',
+          }
+        );
+      };
+
+      scrollMessages();
 
       const sessionRef = query(
-        collection(firestore, "chatSessions"),
-        where("id", "==", sessionId)
+        collection(firestore, 'chatSessions'),
+        where('id', '==', sessionId)
       );
 
-      unsubscribe = onSnapshot(sessionRef, async (snapshot) => {
+      unsubscribe = onSnapshot(sessionRef, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
-          if (change.type === "modified") {
+          if (change.type === 'modified') {
             const updatedData = change.doc.data();
             const updatedMessages = updatedData.messages;
 
@@ -171,21 +163,9 @@ const ChatInterface = () => {
     }
 
     return () => {
-      if (sessionLoaded || currentSession) unsubscribe();
+      if (unsubscribe) unsubscribe();
     };
-  }, [sessionLoaded]);
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const history = await fetchChatHistory(userData.id);
-        setChatHistoryData(history);
-      } catch (error) {
-        console.error("Error fetching chat history:", error);
-      }
-    };
-    fetchHistory();
-  }, [userData.id]);
+  }, [sessionLoaded, currentSession, sessionId, dispatch]);
 
   const handleOnScroll = () => {
     const scrolled =
@@ -203,7 +183,7 @@ const ChatInterface = () => {
       0,
       messagesContainerRef.current?.scrollHeight,
       {
-        behavior: "smooth",
+        behavior: 'smooth',
       }
     );
 
@@ -214,7 +194,7 @@ const ChatInterface = () => {
     dispatch(setStreaming(true));
 
     if (!input) {
-      dispatch(setError("Please enter a message"));
+      dispatch(setError('Please enter a message'));
       setTimeout(() => {
         dispatch(setError(null));
       }, 3000);
@@ -243,6 +223,7 @@ const ChatInterface = () => {
     dispatch(setTyping(true));
 
     await sendMessage({ message, id: sessionId }, dispatch);
+    console.log('message sent');
   };
 
   const handleQuickReply = async (option) => {
@@ -267,6 +248,7 @@ const ChatInterface = () => {
     await sendMessage({ message, id: currentSession?.id }, dispatch);
   };
 
+  /* Push Enter */
   const keyDownHandler = async (e) => {
     if (typing || !input || streaming) return;
     if (e.keyCode === 13) handleSendMessage();
@@ -315,7 +297,7 @@ const ChatInterface = () => {
     )
       return (
         <Grid
-          onClick={() => dispatch(setMore({ role: "shutdown" }))}
+          onClick={() => dispatch(setMore({ role: 'shutdown' }))}
           {...styles.centerChat.centerChatGridProps}
         >
           <Grid
@@ -364,6 +346,10 @@ const ChatInterface = () => {
     );
   };
 
+  const renderQuickActions = () => {
+    return <QuickActions />;
+  };
+
   const renderBottomChatContent = () => {
     if (!openSettingsChat && !infoChatOpened)
       return (
@@ -393,18 +379,11 @@ const ChatInterface = () => {
   return (
     <Grid {...styles.mainGridProps}>
       {renderMoreChat()}
-      <Button onClick={toggleChatHistory}>
-        {showChatHistory ? "Hide History" : "Show History"}
-      </Button>
-      {showChatHistory ? (
-        renderChatHistory()
-      ) : (
-        <>
-          {renderCenterChatContent()}
-          {renderCenterChatContentNoMessages()}
-        </>
-      )}
+      {renderCenterChatContent()}
+
+      {renderCenterChatContentNoMessages()}
       {renderNewMessageIndicator()}
+      {renderQuickActions()}
       {renderBottomChatContent()}
     </Grid>
   );
