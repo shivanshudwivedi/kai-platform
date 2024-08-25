@@ -1,37 +1,35 @@
 // QuickActions.jsx
 
-import React, { useState } from 'react';
-
+import React from 'react';
 import { Button, ButtonGroup } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { setInput, setStreaming } from '@/redux/slices/chatSlice';
+import styles from './styles';
 
-import MyIcon from '@/assets/svg/toggle.svg';
+const QuickActions = ({ onAction }) => {
+  const dispatch = useDispatch();
 
-import buttonStyles from './styles';
-
-const QuickActions = () => {
-  const [display, setDisplay] = useState(false);
-
-  const handleClick = () => {
-    setDisplay((prevDisplay) => !prevDisplay);
+  const handleQuickAction = (action) => {
+    dispatch(setStreaming(true));
+    onAction(action);
   };
 
   return (
-    <div>
-      <Button sx={buttonStyles} onClick={handleClick}>
-        <MyIcon />
+    <ButtonGroup
+      variant="contained"
+      aria-label="quick action button group"
+      sx={styles.buttonGroup}
+    >
+      <Button onClick={() => handleQuickAction('suggest_techniques')} sx={styles.button}>
+        Suggest Learning Techniques
       </Button>
-
-      {display && (
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group"
-        >
-          <Button>Suggest Learning Techniques</Button>
-          <Button>Recommend Books</Button>
-          <Button>Summarize</Button>
-        </ButtonGroup>
-      )}
-    </div>
+      <Button onClick={() => handleQuickAction('recommend_books')} sx={styles.button}>
+        Recommend Books
+      </Button>
+      <Button onClick={() => handleQuickAction('summarize')} sx={styles.button}>
+        Summarize
+      </Button>
+    </ButtonGroup>
   );
 };
 

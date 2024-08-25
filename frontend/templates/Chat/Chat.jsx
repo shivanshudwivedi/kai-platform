@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-
+import { useEffect, useRef, useCallback } from 'react';
 import {
   ArrowDownwardOutlined,
   InfoOutlined,
@@ -16,30 +15,22 @@ import {
 } from '@mui/material';
 import {
   collection,
-  getDocs,
   onSnapshot,
   query,
   where,
 } from 'firebase/firestore';
-
 import { useDispatch, useSelector } from 'react-redux';
-
 import NavigationIcon from '@/assets/svg/Navigation.svg';
-
 import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
-
-import QuickActions from '../QuickActions';
-
+import QuickActions from './QuickActions';
 import CenterChatContentNoMessages from './CenterChatContentNoMessages';
 import ChatHistory from './ChatHistory';
 import ChatSpinner from './ChatSpinner';
 import Message from './Message';
 import styles from './styles';
-
 import {
   openInfoChat,
   resetChat,
-  setAllSessions,
   setChatSession,
   setError,
   setFullyScrolled,
@@ -55,9 +46,8 @@ import { firestore } from '@/redux/store';
 import createChatSession from '@/services/chatbot/createChatSession';
 import sendMessage from '@/services/chatbot/sendMessage';
 
-const ChatInterface = () => {
+const Chat = () => {
   const messagesContainerRef = useRef();
-
   const dispatch = useDispatch();
   const {
     more,
@@ -73,23 +63,16 @@ const ChatInterface = () => {
     error,
   } = useSelector((state) => state.chat);
   const { data: userData } = useSelector((state) => state.user);
-  const { sessions, allSessions } = useSelector((state) => state.chat);
 
   const sessionId = localStorage.getItem('sessionId');
-
   const currentSession = chat;
   const chatMessages = currentSession?.messages;
   const showNewMessageIndicator = !fullyScrolled && streamingDone;
 
   const startConversation = async (message) => {
-    dispatch(
-      setMessages({
-        role: MESSAGE_ROLE.AI,
-      })
-    );
+    dispatch(setMessages({ role: MESSAGE_ROLE.AI }));
     dispatch(setTyping(true));
 
-    // Define the chat payload
     const chatPayload = {
       user: {
         id: userData?.id,
@@ -100,14 +83,11 @@ const ChatInterface = () => {
       message,
     };
 
-    // Send a chat session
     const { status, data } = await createChatSession(chatPayload, dispatch);
 
-    // Remove typing bubble
     dispatch(setTyping(false));
     if (status === 'created') dispatch(setStreaming(true));
 
-    // Set chat session
     dispatch(setChatSession(data));
     dispatch(setSessionLoaded(true));
   };
@@ -117,7 +97,7 @@ const ChatInterface = () => {
       localStorage.removeItem('sessionId');
       dispatch(resetChat());
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     let unsubscribe;
@@ -127,9 +107,7 @@ const ChatInterface = () => {
         messagesContainerRef.current?.scrollTo(
           0,
           messagesContainerRef.current?.scrollHeight,
-          {
-            behavior: 'smooth',
-          }
+          { behavior: 'smooth' }
         );
       };
 
@@ -145,16 +123,13 @@ const ChatInterface = () => {
           if (change.type === 'modified') {
             const updatedData = change.doc.data();
             const updatedMessages = updatedData.messages;
-
             const lastMessage = updatedMessages[updatedMessages.length - 1];
 
             if (lastMessage?.role === MESSAGE_ROLE.AI) {
-              dispatch(
-                setMessages({
-                  role: MESSAGE_ROLE.AI,
-                  response: lastMessage,
-                })
-              );
+              dispatch(setMessages({
+                role: MESSAGE_ROLE.AI,
+                response: lastMessage,
+              }));
               dispatch(setTyping(false));
             }
           }
@@ -171,8 +146,8 @@ const ChatInterface = () => {
     const scrolled =
       Math.abs(
         messagesContainerRef.current.scrollHeight -
-          messagesContainerRef.current.clientHeight -
-          messagesContainerRef.current.scrollTop
+        messagesContainerRef.current.clientHeight -
+        messagesContainerRef.current.scrollTop
       ) <= 1;
 
     if (fullyScrolled !== scrolled) dispatch(setFullyScrolled(scrolled));
@@ -182,11 +157,8 @@ const ChatInterface = () => {
     messagesContainerRef.current?.scrollTo(
       0,
       messagesContainerRef.current?.scrollHeight,
-      {
-        behavior: 'smooth',
-      }
+      { behavior: 'smooth' }
     );
-
     dispatch(setStreamingDone(false));
   };
 
@@ -204,9 +176,7 @@ const ChatInterface = () => {
     const message = {
       role: MESSAGE_ROLE.HUMAN,
       type: MESSAGE_TYPES.TEXT,
-      payload: {
-        text: input,
-      },
+      payload: { text: input },
     };
 
     if (!chatMessages) {
@@ -214,16 +184,9 @@ const ChatInterface = () => {
       return;
     }
 
-    dispatch(
-      setMessages({
-        role: MESSAGE_ROLE.HUMAN,
-      })
-    );
-
+    dispatch(setMessages({ role: MESSAGE_ROLE.HUMAN }));
     dispatch(setTyping(true));
-
     await sendMessage({ message, id: sessionId }, dispatch);
-    console.log('message sent');
   };
 
   const handleQuickReply = async (option) => {
@@ -233,41 +196,43 @@ const ChatInterface = () => {
     const message = {
       role: MESSAGE_ROLE.HUMAN,
       type: MESSAGE_TYPES.QUICK_REPLY,
-      payload: {
-        text: option,
-      },
+      payload: { text: option },
     };
 
-    dispatch(
-      setMessages({
-        role: MESSAGE_ROLE.HUMAN,
-      })
-    );
+    dispatch(setMessages({ role: MESSAGE_ROLE.HUMAN }));
     dispatch(setTyping(true));
-
     await sendMessage({ message, id: currentSession?.id }, dispatch);
   };
 
-  /* Push Enter */
+  const handleQuickAction = useCallback((action) => {
+    const quickActionResponses = {
+      suggest_techniques: "Here are some interactive learning techniques: 1. Active recall, 2. Spaced repetition, 3. Peer teaching, 4. Mind mapping, 5. Gamification.",
+      recommend_books: "I recommend the following books for coding: 1. 'Clean Code' by Robert C. Martin, 2. 'The Pragmatic Programmer' by Andrew Hunt and David Thomas, 3. 'Code Complete' by Steve McConnell.",
+      summarize: "I can help summarize text or concepts. Please provide the content you'd like me to summarize.",
+    };
+
+    const response = quickActionResponses[action] || 'Unknown action';
+    dispatch(setInput(response));
+    handleSendMessage();
+  }, [dispatch]);
+
   const keyDownHandler = async (e) => {
     if (typing || !input || streaming) return;
     if (e.keyCode === 13) handleSendMessage();
   };
 
-  const renderSendIcon = () => {
-    return (
-      <InputAdornment position="end">
-        <IconButton
-          onClick={handleSendMessage}
-          {...styles.bottomChatContent.iconButtonProps(
-            typing || error || !input || streaming
-          )}
-        >
-          <NavigationIcon />
-        </IconButton>
-      </InputAdornment>
-    );
-  };
+  const renderSendIcon = () => (
+    <InputAdornment position="end">
+      <IconButton
+        onClick={handleSendMessage}
+        {...styles.bottomChatContent.iconButtonProps(
+          typing || error || !input || streaming
+        )}
+      >
+        <NavigationIcon />
+      </IconButton>
+    </InputAdornment>
+  );
 
   const renderMoreChat = () => {
     if (!more) return null;
@@ -334,21 +299,15 @@ const ChatInterface = () => {
     return null;
   };
 
-  const renderNewMessageIndicator = () => {
-    return (
-      <Fade in={showNewMessageIndicator}>
-        <Button
-          startIcon={<ArrowDownwardOutlined />}
-          onClick={handleScrollToBottom}
-          {...styles.newMessageButtonProps}
-        />
-      </Fade>
-    );
-  };
-
-  const renderQuickActions = () => {
-    return <QuickActions />;
-  };
+  const renderNewMessageIndicator = () => (
+    <Fade in={showNewMessageIndicator}>
+      <Button
+        startIcon={<ArrowDownwardOutlined />}
+        onClick={handleScrollToBottom}
+        {...styles.newMessageButtonProps}
+      />
+    </Fade>
+  );
 
   const renderBottomChatContent = () => {
     if (!openSettingsChat && !infoChatOpened)
@@ -380,13 +339,12 @@ const ChatInterface = () => {
     <Grid {...styles.mainGridProps}>
       {renderMoreChat()}
       {renderCenterChatContent()}
-
       {renderCenterChatContentNoMessages()}
       {renderNewMessageIndicator()}
-      {renderQuickActions()}
+      <QuickActions onAction={handleQuickAction} />
       {renderBottomChatContent()}
     </Grid>
   );
 };
 
-export default ChatInterface;
+export default Chat;
